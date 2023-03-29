@@ -1,11 +1,14 @@
 package dev.riko.golftourplanner.utils;
 
+import dev.riko.golftourplanner.facility.FacilityType;
 import dev.riko.golftourplanner.place.Place;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import static dev.riko.golftourplanner.facility.FacilityType.*;
 
 public class GenerateData {
     private final List<Place> placesData;
@@ -44,7 +47,39 @@ public class GenerateData {
 
             float rating = random.nextFloat(0, 10);
 
-            data.add(new Place(lat, lon, title, rating));
+            List<FacilityType> facilityList = new ArrayList<>();
+            facilityList.add(SHOP);
+            if (random.nextBoolean()) facilityList.add(GAS_STATION);
+            if (random.nextBoolean()) facilityList.add(HOSTEL);
+            if (rating >= 2) if (random.nextBoolean()) facilityList.add(SUPERMARKET);
+            if (rating >= 3)
+                if (random.nextBoolean()) facilityList.add(RESTAURANTS);
+            if (rating >= 6) {
+                if (random.nextBoolean()) facilityList.add(HOTEL);
+                if (random.nextBoolean()) facilityList.add(SHOPPING_MALL);
+            }
+            if (rating >= 8) {
+                if (random.nextBoolean()) facilityList.add(GOLF_COURSE);
+                if (random.nextBoolean()) facilityList.add(AIRPORT);
+            }
+            float facilityPercentage = facilityList.size() * 100f / FacilityType.values().length;
+            int population = 0;
+            try {
+                population = random.nextInt((int) rating, (int) (facilityPercentage * rating * 1000));
+            } catch (IllegalArgumentException e) {
+                System.out.println((int) rating + " " + (int) (facilityPercentage * rating * 1000));
+            }
+
+            float peopleFlow = rating / 10 * population;
+            int roadsCount;
+
+            if (amount < 15) {
+                roadsCount = random.nextInt(1, amount);
+            } else {
+                roadsCount = random.nextInt(1, 15);
+            }
+
+            data.add(new Place(lat, lon, title, rating, facilityList, population, peopleFlow, roadsCount));
         }
         return data;
     }
