@@ -26,8 +26,8 @@ public class Main {
         Place startPlace = placeList.get(scanner.nextInt() - 1);
         System.out.print("Select the final destination (1 - " + amount + "): ");
         Place finalPlace = placeList.get(scanner.nextInt() - 1);
-        /*System.out.print("How much you want to exploring (0 - 10): ");
-        int exploringRate = scanner.nextInt();*/
+        System.out.print("How much you want to exploring (0 - 10): ");
+        int exploringRate = scanner.nextInt();
 
         System.out.println();
         System.out.println("Your starting place is:");
@@ -36,6 +36,7 @@ public class Main {
         finalPlace.printPlace();
         System.out.println();
 
-        System.out.println("The air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", startPlace.distanceFrom(finalPlace)) + "km.\n");
+        SearchOptimalTrip optimalTrip = new SearchOptimalTrip(startPlace, finalPlace, exploringRate);
+        System.out.println("The air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getOptimalTripLength()) + "km.\n");
     }
 }
