@@ -33,14 +33,34 @@ public class Main {
             String type = scanner.next();
             switch (type) {
                 case "pi" -> {
-                    System.out.print("Search specific city: ");
-                    String city = scanner.next();
+                    boolean exists = false;
 
-                    for (Place place : placeList) {
-                        if (place.getTitle().equalsIgnoreCase(city)) {
-                            place.printPlace();
+                    do {
+                        System.out.print("Search specific city: ");
+                        String city = scanner.next();
+
+                        for (Place place : placeList) {
+                            if (place.getTitle().equalsIgnoreCase(city)) {
+                                place.printPlace();
+                                exists = true;
+                            }
                         }
-                    }
+                        if (!exists) {
+                            String showAll = "n";
+                            System.out.println("This city does not exists!");
+                            System.out.print("Do you want to list all the cities? | y, n >> ");
+                            showAll = scanner.next();
+
+                            if (showAll.equals("y")) {
+                                for (int i = 0; i < placeList.size(); i++) {
+                                    Place place = placeList.get(i);
+                                    System.out.print((i + 1) + ". ");
+                                    place.printPlace();
+                                }
+                                System.out.println();
+                            }
+                        }
+                    } while (!exists);
                 }
                 case "lc" -> {
                     System.out.print("Select the starting destination (1 - " + amount + "): ");
