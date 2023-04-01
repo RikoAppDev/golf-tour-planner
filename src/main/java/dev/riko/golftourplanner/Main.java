@@ -2,6 +2,7 @@ package dev.riko.golftourplanner;
 
 import dev.riko.golftourplanner.place.Place;
 import dev.riko.golftourplanner.utils.GenerateData;
+import dev.riko.golftourplanner.world.World;
 
 import java.util.List;
 import java.util.Scanner;
@@ -18,13 +19,9 @@ public class Main {
         } while (amount < 2);
 
         GenerateData generateData = new GenerateData(amount);
-        List<Place> placeList = generateData.getData();
+        World world = new World(generateData.getData());
 
-        for (int i = 0; i < placeList.size(); i++) {
-            Place place = placeList.get(i);
-            System.out.print((i + 1) + ". ");
-            place.printPlace();
-        }
+        world.showPlaces();
         System.out.println();
 
         boolean run = true;
@@ -33,44 +30,35 @@ public class Main {
             String type = scanner.next();
             switch (type) {
                 case "pi" -> {
-                    boolean exists = false;
+                    boolean exists;
 
                     do {
                         System.out.print("Search specific city: ");
                         String city = scanner.next();
 
-                        for (Place place : placeList) {
-                            if (place.getTitle().equalsIgnoreCase(city)) {
-                                place.printPlace();
-                                exists = true;
-                            }
-                        }
+                        exists = world.searchCity(city, true);
+
                         if (!exists) {
-                            String showAll = "n";
                             System.out.println("This city does not exists!");
                             System.out.print("Do you want to list all the cities? | y, n >> ");
-                            showAll = scanner.next();
+                            String showAll = scanner.next();
 
                             if (showAll.equals("y")) {
-                                for (int i = 0; i < placeList.size(); i++) {
-                                    Place place = placeList.get(i);
-                                    System.out.print((i + 1) + ". ");
-                                    place.printPlace();
-                                }
+                                world.showPlaces();
                                 System.out.println();
                             }
                         }
                     } while (!exists);
                 }
-                case "lc" -> {
+                case "dc" -> {
                     System.out.print("Select the starting destination (1 - " + amount + "): ");
-                    Place startPlace = placeList.get(scanner.nextInt() - 1);
+                    Place startPlace = world.getPlaceList().get(scanner.nextInt() - 1);
                     Place finalPlace;
                     String notGc = "n";
 
                     do {
                         System.out.print("Select the final destination (1 - " + amount + "): ");
-                        finalPlace = placeList.get(scanner.nextInt() - 1);
+                        finalPlace = world.getPlaceList().get(scanner.nextInt() - 1);
                         if (!finalPlace.getFacilityList().contains(GOLF_COURSE)) {
                             System.out.println("Your final destination does not have golf course!");
                             System.out.print("Would you like to select again? | y, n >> ");
