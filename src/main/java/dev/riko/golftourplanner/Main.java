@@ -51,20 +51,104 @@ public class Main {
                     } while (!exists);
                 }
                 case "dc" -> {
-                    System.out.print("Select the starting destination (1 - " + amount + "): ");
-                    Place startPlace = world.getPlaceList().get(scanner.nextInt() - 1);
-                    Place finalPlace;
-                    String notGc = "n";
+                    Place startPlace = null;
+                    Place finalPlace = null;
+                    boolean existsStartPlace;
+                    boolean existsFinalPlace;
 
                     do {
-                        System.out.print("Select the final destination (1 - " + amount + "): ");
-                        finalPlace = world.getPlaceList().get(scanner.nextInt() - 1);
-                        if (!finalPlace.getFacilityList().contains(GOLF_COURSE)) {
-                            System.out.println("Your final destination does not have golf course!");
-                            System.out.print("Would you like to select again? | y, n >> ");
-                            notGc = scanner.next();
+                        System.out.print("Select the start destination: ");
+                        String city = scanner.next();
+                        existsStartPlace = world.searchCity(city);
+
+                        if (existsStartPlace) {
+                            List<Place> startPlaces = world.getPlaces(city);
+                            if (startPlaces.size() == 1) {
+                                startPlace = startPlaces.get(0);
+                            } else {
+                                int input;
+                                for (int i = 0; i < startPlaces.size(); i++) {
+                                    System.out.print((i + 1) + ". ");
+                                    startPlaces.get(i).printPlace();
+                                }
+                                System.out.print("There is more possible start destinations, select one of them (1 - " + startPlaces.size() + ") >> ");
+
+                                do {
+                                    input = scanner.nextInt();
+                                    if (input > 0 && input <= startPlaces.size()) {
+                                        startPlace = startPlaces.get(input - 1);
+                                        System.out.print("Selected start destination: ");
+                                        startPlace.printPlace();
+                                    } else {
+                                        System.out.print("Wrong input! Select again >> ");
+                                    }
+                                } while (input <= 0 || input > startPlaces.size());
+                            }
+                        } else {
+                            System.out.println("This city does not exists!");
+                            System.out.print("Do you want to list all the cities? | y, n >> ");
+                            String showAll = scanner.next();
+
+                            if (showAll.equals("y")) {
+                                world.showPlaces();
+                                System.out.println();
+                            }
                         }
-                    } while (notGc.equals("y") && !finalPlace.getFacilityList().contains(GOLF_COURSE));
+                    } while (!existsStartPlace);
+
+                    String notGcInput = "n";
+                    do {
+                        System.out.print("Select the final destination: ");
+                        String city = scanner.next();
+                        existsFinalPlace = world.searchCity(city);
+
+                        if (existsFinalPlace) {
+                            List<Place> finalPlaces = world.getPlaces(city);
+                            if (finalPlaces.size() == 1) {
+                                finalPlace = finalPlaces.get(0);
+
+                                if (!finalPlace.hasFacility(GOLF_COURSE)) {
+                                    System.out.println("Your final destination does not have golf course!");
+                                    System.out.print("Would you like to select again? | y, n >> ");
+                                    notGcInput = scanner.next();
+                                }
+                            } else {
+                                int input;
+                                for (int i = 0; i < finalPlaces.size(); i++) {
+                                    System.out.print((i + 1) + ". ");
+                                    finalPlaces.get(i).printPlace();
+                                }
+                                System.out.print("There is more possible final destinations, select one of them (1 - " + finalPlaces.size() + ") >> ");
+
+                                do {
+                                    input = scanner.nextInt();
+                                    if (input > 0 && input <= finalPlaces.size()) {
+                                        finalPlace = finalPlaces.get(input - 1);
+                                        System.out.print("Selected final destination: ");
+                                        finalPlace.printPlace();
+
+                                        if (!finalPlace.hasFacility(GOLF_COURSE)) {
+                                            System.out.println("Your final destination does not have golf course!");
+                                            System.out.print("Would you like to select again? | y, n >> ");
+                                            notGcInput = scanner.next();
+                                        }
+                                    } else {
+                                        System.out.print("Wrong input! Select again >> ");
+                                    }
+                                } while (input <= 0 || input > finalPlaces.size());
+                            }
+                        } else {
+                            System.out.println("This city does not exists!");
+                            System.out.print("Do you want to list all the cities? | y, n >> ");
+                            String showAll = scanner.next();
+
+                            if (showAll.equals("y")) {
+                                world.showPlaces();
+                                System.out.println();
+                            }
+                        }
+                    } while (!existsFinalPlace || (notGcInput.equals("y") && !finalPlace.hasFacility(GOLF_COURSE)));
+
                     System.out.print("How much you want to exploring (0 - 10): ");
                     int exploringRate = scanner.nextInt();
 

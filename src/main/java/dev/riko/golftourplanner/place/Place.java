@@ -30,6 +30,10 @@ public class Place extends POI {
         System.out.println("place: " + getTitle() + " | location: [" + String.format("%.2f", getLatitude()) + "; " + String.format("%.2f", getLongitude()) + "] | population: " + getPopulation() + " | rating: " + String.format("%.2f", getRating()) + " | facilities: " + getFacilityList() + " | connections: " + getRoadsCount());
     }
 
+    public boolean hasFacility(FacilityType facilityType) {
+        return facilityTypeList.contains(facilityType);
+    }
+
     public List<FacilityType> getFacilityList() {
         return facilityTypeList;
     }
