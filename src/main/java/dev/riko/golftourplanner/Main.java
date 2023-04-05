@@ -26,7 +26,7 @@ public class Main {
 
         boolean run = true;
         while (run) {
-            System.out.print("Place info -> pi | Distance calculator -> dc | EXIT -> e >> ");
+            System.out.print("Place info -> pi | Air distance calculator -> adc | EXIT -> e >> ");
             String type = scanner.next();
             switch (type) {
                 case "pi" -> {
@@ -50,7 +50,7 @@ public class Main {
                         }
                     } while (!exists);
                 }
-                case "dc" -> {
+                case "adc" -> {
                     Place startPlace = null;
                     Place finalPlace = null;
                     boolean existsStartPlace;

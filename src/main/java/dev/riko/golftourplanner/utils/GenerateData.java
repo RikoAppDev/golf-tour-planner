@@ -3,10 +3,7 @@ package dev.riko.golftourplanner.utils;
 import dev.riko.golftourplanner.facility.FacilityType;
 import dev.riko.golftourplanner.place.Place;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static dev.riko.golftourplanner.facility.FacilityType.*;
 
@@ -70,17 +67,27 @@ public class GenerateData {
                 System.out.println((int) rating + " " + (int) (facilityPercentage * rating * 1000));
             }
 
-            float peopleFlow = rating / 10 * population;
-            int roadsCount;
-
-            if (amount < 15) {
-                roadsCount = random.nextInt(1, amount);
-            } else {
-                roadsCount = random.nextInt(1, 15);
-            }
-
-            data.add(new Place(lat, lon, title, rating, facilityList, population, peopleFlow, roadsCount));
+            data.add(new Place(lat, lon, title, rating, facilityList, population));
         }
+
+        for (int i = 0; i < data.size(); i++) {
+            Place place = data.get(i);
+            int distance = 1;
+            boolean connect = false;
+
+            while (!connect) {
+                for (Place p : data) {
+                    if (place != p && p.distanceFrom(place) < distance && !p.getPlaceConnections().contains(place)) {
+                        place.addToPlaceConnections(p);
+                        p.addToPlaceConnections(place);
+                        connect = true;
+                        break;
+                    }
+                }
+                distance++;
+            }
+        }
+
         return data;
     }
 
