@@ -1,5 +1,6 @@
 package dev.riko.golftourplanner.place;
 
+import dev.riko.golftourplanner.facility.Facility;
 import dev.riko.golftourplanner.facility.FacilityType;
 
 import java.util.HashSet;
@@ -7,24 +8,42 @@ import java.util.List;
 import java.util.Set;
 
 public class Place extends POI {
-    private final List<FacilityType> facilityTypeList;
+    private final List<Facility> facilityList;
     private final int population;
     private final Set<Place> placeConnections = new HashSet<>();
 
-    public Place(double latitude, double longitude, String title, float rating, List<FacilityType> facilities, int population) {
+    public Place(double latitude, double longitude, String title, float rating, List<Facility> facilities, int population) {
         super(latitude, longitude, title, rating);
-        this.facilityTypeList = facilities;
+        this.facilityList = facilities;
         this.population = population;
     }
 
-    public Place(double latitude, double longitude, String title, List<FacilityType> facilities, int population) {
+    public Place(double latitude, double longitude, String title, List<Facility> facilities, int population) {
         super(latitude, longitude, title);
-        this.facilityTypeList = facilities;
+        this.facilityList = facilities;
         this.population = population;
     }
 
     public void printPlace() {
-        System.out.println("place: " + getTitle() + " | location: [" + String.format("%.2f", getLatitude()) + "; " + String.format("%.2f", getLongitude()) + "] | population: " + getPopulation() + " | rating: " + String.format("%.2f", getRating()) + " | facilities: " + getFacilityList() + " | connections " + getPlaceConnections().size() + ": " + printPlaceConnections());
+        System.out.println("🏙️ " + getTitle() + " | 🛰️ [" + String.format("%.2f", getLatitude()) + "; " + String.format("%.2f", getLongitude()) + "] |  ️👨🏼‍👩🏼‍👧🏼‍👦🏼 " + getPopulation() + " | " + String.format("%.2f", getRating()) + " 👍 | " + printFacilities() + " | " + getPlaceConnections().size() + " 🛣️ " + printPlaceConnections());
+    }
+
+    private String printFacilities() {
+        String facilities = "";
+        for (Facility facility : facilityList) {
+            switch (facility.getFacilityType()) {
+                case HOTEL -> facilities = facilities.concat("🏨");
+                case GOLF_COURSE -> facilities = facilities.concat("⛳");
+                case AIRPORT -> facilities = facilities.concat("🛫");
+                case RESTAURANTS -> facilities = facilities.concat("🍜");
+                case HOSTEL -> facilities = facilities.concat("🏩");
+                case SHOPPING_MALL -> facilities = facilities.concat("🏬");
+                case GAS_STATION -> facilities = facilities.concat("⛽");
+                case SUPERMARKET -> facilities = facilities.concat("🛒");
+                case SHOP -> facilities = facilities.concat("🏪");
+            }
+        }
+        return facilities;
     }
 
     private String printPlaceConnections() {
@@ -39,11 +58,11 @@ public class Place extends POI {
     }
 
     public boolean hasFacility(FacilityType facilityType) {
-        return facilityTypeList.contains(facilityType);
+        return facilityList.contains(facilityType);
     }
 
-    public List<FacilityType> getFacilityList() {
-        return facilityTypeList;
+    public List<Facility> getFacilityList() {
+        return facilityList;
     }
 
     public int getPopulation() {
