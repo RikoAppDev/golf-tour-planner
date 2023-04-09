@@ -1,5 +1,6 @@
 package dev.riko.golftourplanner.world;
 
+import dev.riko.golftourplanner.facility.FacilityType;
 import dev.riko.golftourplanner.place.Place;
 
 import java.util.ArrayList;
@@ -16,6 +17,14 @@ public class World {
         for (int i = 0; i < placeList.size(); i++) {
             System.out.print((i + 1) + ". ");
             placeList.get(i).printPlace();
+        }
+    }
+
+    public void showPlacesWithFacility(FacilityType facilityType) {
+        for (Place place : placeList) {
+            if (place.hasFacility(facilityType)) {
+                place.printPlace();
+            }
         }
     }
 

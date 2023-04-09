@@ -109,6 +109,13 @@ public class Main {
 
                                 if (!finalPlace.hasFacility(GOLF_COURSE)) {
                                     System.out.println("Your final destination does not have golf course!");
+                                    System.out.print("Do you want to list all the cities with golf course? | y, n >> ");
+                                    String showGolfCourse = scanner.next();
+
+                                    if (showGolfCourse.equals("y")) {
+                                        world.showPlacesWithFacility(GOLF_COURSE);
+                                    }
+
                                     System.out.print("Would you like to select again? | y, n >> ");
                                     notGcInput = scanner.next();
                                 }
@@ -129,6 +136,13 @@ public class Main {
 
                                         if (!finalPlace.hasFacility(GOLF_COURSE)) {
                                             System.out.println("Your final destination does not have golf course!");
+                                            System.out.print("Do you want to list all the cities with golf course? | y, n >> ");
+                                            String showGolfCourse = scanner.next();
+
+                                            if (showGolfCourse.equals("y")) {
+                                                world.showPlacesWithFacility(GOLF_COURSE);
+                                            }
+
                                             System.out.print("Would you like to select again? | y, n >> ");
                                             notGcInput = scanner.next();
                                         }
