@@ -1,7 +1,7 @@
-package dev.riko.golftourplanner.place;
+package dev.riko.golftourplanner.world.place;
 
-import dev.riko.golftourplanner.facility.Facility;
-import dev.riko.golftourplanner.facility.FacilityType;
+import dev.riko.golftourplanner.world.facility.Facility;
+import dev.riko.golftourplanner.world.facility.FacilityType;
 
 import java.util.HashSet;
 import java.util.List;
@@ -58,7 +58,11 @@ public class Place extends POI {
     }
 
     public boolean hasFacility(FacilityType facilityType) {
-        return facilityList.contains(facilityType);
+        for (Facility facility : facilityList) {
+            if (facility.getFacilityType() == facilityType)
+                return true;
+        }
+        return false;
     }
 
     public List<Facility> getFacilityList() {

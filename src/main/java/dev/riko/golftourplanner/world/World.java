@@ -1,7 +1,7 @@
 package dev.riko.golftourplanner.world;
 
-import dev.riko.golftourplanner.facility.FacilityType;
-import dev.riko.golftourplanner.place.Place;
+import dev.riko.golftourplanner.world.facility.FacilityType;
+import dev.riko.golftourplanner.world.place.Place;
 
 import java.util.ArrayList;
 import java.util.List;

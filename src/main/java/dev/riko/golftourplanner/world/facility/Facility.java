@@ -1,4 +1,4 @@
-package dev.riko.golftourplanner.facility;
+package dev.riko.golftourplanner.world.facility;
 
 public class Facility {
     private final FacilityType facilityType;

@@ -1,13 +1,14 @@
 package dev.riko.golftourplanner;
 
-import dev.riko.golftourplanner.place.Place;
+import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
+import dev.riko.golftourplanner.world.place.Place;
 import dev.riko.golftourplanner.utils.GenerateData;
 import dev.riko.golftourplanner.world.World;
 
 import java.util.List;
 import java.util.Scanner;
 
-import static dev.riko.golftourplanner.facility.FacilityType.GOLF_COURSE;
+import static dev.riko.golftourplanner.world.facility.FacilityType.GOLF_COURSE;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,7 +27,7 @@ public class Main {
 
         boolean run = true;
         while (run) {
-            System.out.print("Place info -> pi | Air distance calculator -> adc | EXIT -> e >> ");
+            System.out.print("Place info -> pi | Distance calculator -> dc | EXIT -> e >> ");
             String type = scanner.next();
             switch (type) {
                 case "pi" -> {
@@ -50,7 +51,7 @@ public class Main {
                         }
                     } while (!exists);
                 }
-                case "adc" -> {
+                case "dc" -> {
                     Place startPlace = null;
                     Place finalPlace = null;
                     boolean existsStartPlace;

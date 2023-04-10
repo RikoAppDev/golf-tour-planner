@@ -1,4 +1,4 @@
-package dev.riko.golftourplanner.place;
+package dev.riko.golftourplanner.world.place;
 
 public class POI extends Point {
 

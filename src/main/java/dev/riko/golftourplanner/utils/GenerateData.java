@@ -1,12 +1,12 @@
 package dev.riko.golftourplanner.utils;
 
-import dev.riko.golftourplanner.facility.Facility;
-import dev.riko.golftourplanner.facility.FacilityType;
-import dev.riko.golftourplanner.place.Place;
+import dev.riko.golftourplanner.world.facility.Facility;
+import dev.riko.golftourplanner.world.facility.FacilityType;
+import dev.riko.golftourplanner.world.place.Place;
 
 import java.util.*;
 
-import static dev.riko.golftourplanner.facility.FacilityType.*;
+import static dev.riko.golftourplanner.world.facility.FacilityType.*;
 
 public class GenerateData {
     private final List<Place> placesData;

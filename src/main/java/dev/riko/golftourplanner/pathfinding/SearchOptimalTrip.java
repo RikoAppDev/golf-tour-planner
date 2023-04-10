@@ -1,6 +1,6 @@
-package dev.riko.golftourplanner;
+package dev.riko.golftourplanner.pathfinding;
 
-import dev.riko.golftourplanner.place.Place;
+import dev.riko.golftourplanner.world.place.Place;
 
 public class SearchOptimalTrip {
     private final Place startPlace;
