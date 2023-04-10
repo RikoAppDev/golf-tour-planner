@@ -174,8 +174,11 @@ public class Main {
                     finalPlace.printPlace();
                     System.out.println();
 
-                    SearchOptimalTrip optimalTrip = new SearchOptimalTrip(startPlace, finalPlace, exploringRate);
-                    System.out.println("The air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getOptimalTripLength()) + "km.\n");
+                    SearchOptimalTrip optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace, exploringRate);
+                    System.out.println("Air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getAirDistanceLength()) + "km.");
+                    System.out.println("The shortest route between places is: " + optimalTrip.printShortestPath());
+                    System.out.println("Length of the route: " + String.format("%.2f", optimalTrip.getShortestPathLength()) + "km");
+                    System.out.println();
                 }
                 default -> run = false;
             }

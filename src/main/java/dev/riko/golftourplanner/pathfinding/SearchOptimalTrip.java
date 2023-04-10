@@ -1,25 +1,59 @@
 package dev.riko.golftourplanner.pathfinding;
 
+import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.place.Place;
+
+import java.util.List;
 
 public class SearchOptimalTrip {
     private final Place startPlace;
     private final Place finalPlace;
-    private double tripLength = 0;
     private final int exploringRate;
+    private final Dijkstra dijkstra;
+    private final List<Place> shortestPath;
 
-    public SearchOptimalTrip(Place startPlace, Place finalPlace, int exploringRate) {
+    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace, int exploringRate) {
         this.startPlace = startPlace;
         this.finalPlace = finalPlace;
         this.exploringRate = exploringRate;
+
+        dijkstra = new Dijkstra(world, startPlace, finalPlace);
+        shortestPath = dijkstra.getShortestPath();
     }
 
-    public double getOptimalTripLength() {
-        this.tripLength = calculateLength(startPlace, finalPlace);
-        return tripLength;
+    public String printShortestPath() {
+        String s = "";
+
+        for (Place place : shortestPath) {
+            s = s.concat(place.getTitle() + " -> ");
+        }
+        s = s.substring(0, s.length() - 4);
+
+        return s;
     }
 
-    private double calculateLength(Place startPlace, Place finalPlace) {
-        return startPlace.distanceFrom(finalPlace);
+    public double getShortestPathLength() {
+        double length = 0;
+        List<Place> placeList = getShortestPath();
+
+        for (int i = 0; i < placeList.size() - 1; i++) {
+            Place first = placeList.get(i);
+            Place second = placeList.get(i + 1);
+            length += first.distanceFrom(second);
+        }
+
+        return length;
+    }
+
+    public double getAirDistanceLength() {
+        return calculateLength(startPlace, finalPlace);
+    }
+
+    private double calculateLength(Place first, Place second) {
+        return first.distanceFrom(second);
+    }
+
+    public List<Place> getShortestPath() {
+        return shortestPath;
     }
 }
