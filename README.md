@@ -1,1 +1,1 @@
-# Golf tour planner
+# Golf tour planner ⛳

@@ -20,16 +20,20 @@ public class Main {
         } while (amount < 2);
 
         GenerateData generateData = new GenerateData(amount);
-        World world = new World(generateData.getData());
-
+        World world = World.getInstance();
+        world.setPlaceList(generateData.getData());
         world.showPlaces();
         System.out.println();
 
         boolean run = true;
         while (run) {
-            System.out.print("Place info -> pi | Distance calculator -> dc | EXIT -> e >> ");
+            System.out.print("List places -> lp | Place info -> pi | Distance calculator -> dc | EXIT -> e >> ");
             String type = scanner.next();
             switch (type) {
+                case "lp" -> {
+                    world.showPlaces();
+                    System.out.println();
+                }
                 case "pi" -> {
                     boolean exists;
 

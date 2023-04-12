@@ -7,9 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class World {
-    private final List<Place> placeList;
+    private static final World worldInstance = new World();
+    private List<Place> placeList;
 
-    public World(List<Place> placeList) {
+    private World() {
+    }
+
+    public static World getInstance() {
+        return worldInstance;
+    }
+
+    public void setPlaceList(List<Place> placeList) {
         this.placeList = placeList;
     }
 
@@ -36,8 +44,7 @@ public class World {
         boolean e = false;
         for (Place place : placeList) {
             if (place.getTitle().equalsIgnoreCase(city)) {
-                if (print)
-                    place.printPlace();
+                if (print) place.printPlace();
                 e = true;
             }
         }
