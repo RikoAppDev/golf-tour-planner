@@ -64,7 +64,7 @@ public class Dijkstra {
         List<Place> shortestPath = new ArrayList<>();
         shortestPath.add(currentNode.place);
 
-        while (currentNode.previousNode != null) {
+        while (currentNode.place != startPlace) {
             currentNode = currentNode.previousNode;
             try {
                 shortestPath.add(0, currentNode.place);
