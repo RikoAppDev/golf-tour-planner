@@ -19,7 +19,6 @@ public class MainApp extends Application {
         WorldFXMLController worldFXMLController = fxmlLoader.getController();
 
         Scene scene = new Scene(root, 1024, 720);
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 
         stage.setTitle("Golf Tour Planner");
         stage.setScene(scene);

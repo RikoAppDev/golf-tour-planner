@@ -15,9 +15,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int amount;
         do {
-            System.out.print("Amount of places (min 2) >> ");
+            System.out.print("Amount of places (min 5) >> ");
             amount = scanner.nextInt();
-        } while (amount < 2);
+        } while (amount < 5);
 
         GenerateData generateData = new GenerateData(amount);
         World world = World.getInstance();
