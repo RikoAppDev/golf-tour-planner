@@ -8,7 +8,7 @@ import java.util.List;
 public class SearchOptimalTrip {
     private final Place startPlace;
     private final Place finalPlace;
-    private final int exploringRate;
+    private int exploringRate;
     private final Dijkstra dijkstra;
     private final List<Place> shortestPath;
 
@@ -16,6 +16,14 @@ public class SearchOptimalTrip {
         this.startPlace = startPlace;
         this.finalPlace = finalPlace;
         this.exploringRate = exploringRate;
+
+        dijkstra = new Dijkstra(world, startPlace, finalPlace);
+        shortestPath = dijkstra.getShortestPath();
+    }
+
+    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace) {
+        this.startPlace = startPlace;
+        this.finalPlace = finalPlace;
 
         dijkstra = new Dijkstra(world, startPlace, finalPlace);
         shortestPath = dijkstra.getShortestPath();
