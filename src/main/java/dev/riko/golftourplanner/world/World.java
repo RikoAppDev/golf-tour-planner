@@ -24,14 +24,14 @@ public class World {
     public void showPlaces() {
         for (int i = 0; i < placeList.size(); i++) {
             System.out.print((i + 1) + ". ");
-            placeList.get(i).printPlace();
+            System.out.println(placeList.get(i).placeInfo());
         }
     }
 
     public void showPlacesWithFacility(FacilityType facilityType) {
         for (Place place : placeList) {
             if (place.hasFacility(facilityType)) {
-                place.printPlace();
+                System.out.println(place.placeInfo());
             }
         }
     }
@@ -44,7 +44,7 @@ public class World {
         boolean e = false;
         for (Place place : placeList) {
             if (place.getTitle().equalsIgnoreCase(city)) {
-                if (print) place.printPlace();
+                if (print) System.out.println(place.placeInfo());
                 e = true;
             }
         }

@@ -38,8 +38,7 @@ public class GenerateData {
                 } else {
                     if (random.nextInt(101) < 91)
                         title = title.concat(String.valueOf(vowels.get(random.nextInt(vowels.size()))));
-                    else
-                        title = title.concat(String.valueOf(consonants.get(random.nextInt(consonants.size()))));
+                    else title = title.concat(String.valueOf(consonants.get(random.nextInt(consonants.size()))));
                 }
             }
 
@@ -50,8 +49,7 @@ public class GenerateData {
             if (random.nextBoolean()) facilityList.add(new Facility(GAS_STATION));
             if (random.nextBoolean()) facilityList.add(new Facility(HOSTEL));
             if (rating >= 2) if (random.nextBoolean()) facilityList.add(new Facility(SUPERMARKET));
-            if (rating >= 3)
-                if (random.nextBoolean()) facilityList.add(new Facility(RESTAURANTS));
+            if (rating >= 3) if (random.nextBoolean()) facilityList.add(new Facility(RESTAURANTS));
             if (rating >= 6) {
                 if (random.nextBoolean()) facilityList.add(new Facility(HOTEL));
                 if (random.nextBoolean()) facilityList.add(new Facility(SHOPPING_MALL));
@@ -68,20 +66,20 @@ public class GenerateData {
                 System.out.println((int) rating + " " + (int) (facilityPercentage * rating * 1000));
             }
 
-            data.add(new Place(lat, lon, title, rating, facilityList, population));
+            int roadsCount = (int) Math.ceil(rating / 1.5);
+            if (roadsCount < 3) roadsCount = 3;
+
+            data.add(new Place(lat, lon, title, rating, facilityList, population, roadsCount));
         }
 
-        for (int i = 0; i < data.size(); i++) {
-            Place place = data.get(i);
-            int distance = 1;
-            boolean connect = false;
 
-            while (!connect) {
-                for (Place p : data) {
-                    if (place != p && p.distanceFrom(place) < distance && !p.getPlaceConnections().contains(place)) {
-                        place.addToPlaceConnections(p);
-                        p.addToPlaceConnections(place);
-                        connect = true;
+        for (Place place : data) {
+            int distance = 1;
+
+            while (place.getPlaceConnections().size() < place.getRoadsCount()) {
+                for (Place potentialConnection : data) {
+                    if (place != potentialConnection && potentialConnection.distanceFrom(place) <= distance && !place.getPlaceConnections().contains(potentialConnection)) {
+                        place.addToPlaceConnections(potentialConnection);
                         break;
                     }
                 }

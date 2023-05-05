@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.riko.golftourplanner.controlers.WorldFXMLController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.riko.golftourplanner.controlers.WorldFXMLController">
    <AnchorPane fx:id="places_panel" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-         <TextField fx:id="searchPlaceInput" prefHeight="25.0" prefWidth="234.0" promptText="Search place" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="14.0" />
-         <Button fx:id="searchPlaceBtn" layoutX="256.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="🔍" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+         <TextField fx:id="searchPlaceInput" onKeyTyped="#filterPlaces" prefHeight="25.0" prefWidth="234.0" promptText="Search places" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="14.0" />
+         <Button fx:id="searchPlaceBtn" layoutX="256.0" mnemonicParsing="false" onAction="#filterPlaces" prefHeight="25.0" prefWidth="30.0" text="🔍" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
          <ListView fx:id="placesList" editable="true" layoutX="16.0" layoutY="49.0" prefHeight="200.0" prefWidth="270.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0" />
          <Label fx:id="infoLabel" alignment="CENTER" layoutX="14.0" layoutY="56.0" prefHeight="530.0" prefWidth="572.0" text="Nothing to see here, generate places!" textAlignment="CENTER" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0">
             <font>
@@ -24,4 +24,7 @@
    <Button fx:id="generatePlacesBtn" layoutX="488.0" layoutY="14.0" mnemonicParsing="false" onAction="#generatePlaces" text="Generate world" textAlignment="CENTER" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
    <Canvas fx:id="worldMap" height="335.0" layoutX="309.0" layoutY="48.0" width="275.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0" />
    <TextField fx:id="placesAmountInput" layoutX="330.0" layoutY="14.0" onAction="#generatePlaces" promptText="Amount of data" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="14.0" />
+   <TextField fx:id="startDestinationInput" layoutX="732.0" layoutY="14.0" promptText="Start destination" AnchorPane.rightAnchor="519.0" AnchorPane.topAnchor="14.0" />
+   <TextField fx:id="finalDestinationInput" layoutX="889.0" layoutY="14.0" promptText="Final destination" AnchorPane.rightAnchor="362.0" AnchorPane.topAnchor="14.0" />
+   <Button fx:id="navigateBtn" layoutX="1047.0" layoutY="14.0" mnemonicParsing="false" text="Navigate" textAlignment="CENTER" AnchorPane.rightAnchor="289.0" AnchorPane.topAnchor="14.0" />
 </AnchorPane>

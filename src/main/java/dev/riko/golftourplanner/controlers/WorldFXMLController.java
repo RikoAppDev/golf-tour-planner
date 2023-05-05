@@ -29,6 +29,12 @@ public class WorldFXMLController {
     @FXML
     public ListView<String> placesList;
     @FXML
+    public TextField startDestinationInput;
+    @FXML
+    public TextField finalDestinationInput;
+    @FXML
+    public Button navigateBtn;
+    @FXML
     private Canvas worldMap;
 
     public void generatePlaces() {
@@ -40,9 +46,7 @@ public class WorldFXMLController {
             world.setPlaceList(generateData.getData());
             showPlaces(world.getPlaceList());
             List<String> placeTitles = new ArrayList<>();
-            world.getPlaceList().forEach(place -> {
-                placeTitles.add(place.getTitle());
-            });
+            world.getPlaceList().forEach(place -> placeTitles.add(place.placeInfo()));
             listPlaces(placeTitles);
             infoLabel.setVisible(false);
         } catch (Exception e) {
@@ -77,5 +81,20 @@ public class WorldFXMLController {
     private void listPlaces(List<String> placeList) {
         placesList.getItems().clear();
         placesList.getItems().addAll(placeList);
+    }
+
+    public void filterPlaces() {
+        List<Place> places = World.getInstance().getPlaceList();
+        System.out.println(places);
+
+        places.forEach(place -> {
+            if (!place.getTitle().contains(searchPlaceInput.getCharacters())) {
+                places.remove(place);
+                System.out.println(place);
+            }
+        });
+
+        placesList.getItems().clear();
+        placesList.getItems().addAll(placesList.getItems());
     }
 }

@@ -10,22 +10,25 @@ import java.util.Set;
 public class Place extends POI {
     private final List<Facility> facilityList;
     private final int population;
+    private final int roadsCount;
     private final Set<Place> placeConnections = new HashSet<>();
 
-    public Place(double latitude, double longitude, String title, float rating, List<Facility> facilities, int population) {
+    public Place(double latitude, double longitude, String title, float rating, List<Facility> facilities, int population, int roadsCount) {
         super(latitude, longitude, title, rating);
         this.facilityList = facilities;
         this.population = population;
+        this.roadsCount = roadsCount;
     }
 
-    public Place(double latitude, double longitude, String title, List<Facility> facilities, int population) {
+    public Place(double latitude, double longitude, String title, List<Facility> facilities, int population, int roadsCount) {
         super(latitude, longitude, title);
         this.facilityList = facilities;
         this.population = population;
+        this.roadsCount = roadsCount;
     }
 
-    public void printPlace() {
-        System.out.println("🏙️ " + getTitle() + " | 🛰️ [" + String.format("%.2f", getLatitude()) + "; " + String.format("%.2f", getLongitude()) + "] |  ️👨🏼‍👩🏼‍👧🏼‍👦🏼 " + getPopulation() + " | " + String.format("%.2f", getRating()) + " 👍 | " + printFacilities() + " | " + getPlaceConnections().size() + " 🛣️ " + printPlaceConnections());
+    public String placeInfo() {
+        return "🏙️ " + getTitle() + " | 🛰️ [" + String.format("%.2f", getLatitude()) + "; " + String.format("%.2f", getLongitude()) + "] |  ️👨🏼‍👩🏼‍👧🏼‍👦🏼 " + getPopulation() + " | " + String.format("%.2f", getRating()) + " 👍 | " + printFacilities() + " | " + getRoadsCount() + " 🛣️ " + printPlaceConnections();
     }
 
     private String printFacilities() {
@@ -79,5 +82,9 @@ public class Place extends POI {
 
     public boolean addToPlaceConnections(Place place) {
         return placeConnections.add(place);
+    }
+
+    public int getRoadsCount() {
+        return roadsCount;
     }
 }

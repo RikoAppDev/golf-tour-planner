@@ -74,7 +74,7 @@ public class Main {
                                 int input;
                                 for (int i = 0; i < startPlaces.size(); i++) {
                                     System.out.print((i + 1) + ". ");
-                                    startPlaces.get(i).printPlace();
+                                    System.out.println(startPlaces.get(i).placeInfo());
                                 }
                                 System.out.print("There is more possible start destinations, select one of them (1 - " + startPlaces.size() + ") >> ");
 
@@ -83,7 +83,7 @@ public class Main {
                                     if (input > 0 && input <= startPlaces.size()) {
                                         startPlace = startPlaces.get(input - 1);
                                         System.out.print("Selected start destination: ");
-                                        startPlace.printPlace();
+                                        System.out.println(startPlace.placeInfo());
                                     } else {
                                         System.out.print("Wrong input! Select again >> ");
                                     }
@@ -128,7 +128,7 @@ public class Main {
                                 int input;
                                 for (int i = 0; i < finalPlaces.size(); i++) {
                                     System.out.print((i + 1) + ". ");
-                                    finalPlaces.get(i).printPlace();
+                                    System.out.println(finalPlaces.get(i).placeInfo());
                                 }
                                 System.out.print("There is more possible final destinations, select one of them (1 - " + finalPlaces.size() + ") >> ");
 
@@ -137,7 +137,7 @@ public class Main {
                                     if (input > 0 && input <= finalPlaces.size()) {
                                         finalPlace = finalPlaces.get(input - 1);
                                         System.out.print("Selected final destination: ");
-                                        finalPlace.printPlace();
+                                        System.out.println(finalPlace.placeInfo());
 
                                         if (!finalPlace.hasFacility(GOLF_COURSE)) {
                                             System.out.println("Your final destination does not have golf course!");
@@ -173,9 +173,9 @@ public class Main {
 
                     System.out.println();
                     System.out.println("Your starting place is:");
-                    startPlace.printPlace();
+                    System.out.println(startPlace.placeInfo());
                     System.out.println("Your final destination is:");
-                    finalPlace.printPlace();
+                    System.out.println(finalPlace.placeInfo());
                     System.out.println();
 
                     SearchOptimalTrip optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace, exploringRate);
