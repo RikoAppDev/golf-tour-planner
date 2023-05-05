@@ -36,6 +36,17 @@ public class World {
         }
     }
 
+    public List<Place> getPlacesWithFacility(FacilityType facilityType) {
+        List<Place> places = new ArrayList<>();
+        for (Place place : placeList) {
+            if (place.hasFacility(facilityType)) {
+                places.add(place);
+            }
+        }
+
+        return places;
+    }
+
     public boolean searchCity(String city) {
         return searchCity(city, false);
     }

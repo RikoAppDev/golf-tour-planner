@@ -5,6 +5,7 @@ import dev.riko.golftourplanner.exeptions.MissingDestinationException;
 import dev.riko.golftourplanner.exeptions.UnknownPlaceException;
 import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
 import dev.riko.golftourplanner.world.World;
+import dev.riko.golftourplanner.world.facility.FacilityType;
 import dev.riko.golftourplanner.world.place.Place;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +30,7 @@ public class MainApp extends Application {
         World world = World.getInstance();
 
         worldFXMLController.generatePlacesBtn.setOnAction(event -> worldFXMLController.generatePlaces(stage));
+        worldFXMLController.placesAmountInput.setOnAction(event -> worldFXMLController.generatePlaces(stage));
 
         worldFXMLController.navigateBtn.setOnAction(event -> {
             try {
@@ -87,6 +89,42 @@ public class MainApp extends Application {
                 a.initOwner(stage);
                 a.setTitle("Warning");
                 a.setContentText("City " + e.getMessage() + " does not exist.");
+                a.showAndWait();
+            }
+        });
+
+        worldFXMLController.searchPlaceBtn.setOnAction(event -> {
+            try {
+                worldFXMLController.filterPlaces();
+            } catch (NullPointerException e) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.initOwner(stage);
+                a.setTitle("Warning");
+                a.setContentText("Firstly you need to generate data!!!");
+                a.showAndWait();
+            }
+        });
+        worldFXMLController.searchPlaceInput.setOnKeyTyped(event -> {
+            try {
+                worldFXMLController.filterPlaces();
+            } catch (NullPointerException e) {
+                worldFXMLController.searchPlaceInput.setText("");
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.initOwner(stage);
+                a.setTitle("Warning");
+                a.setContentText("Firstly you need to generate data!!!");
+                a.showAndWait();
+            }
+        });
+
+        worldFXMLController.searchGolfCoursePlaces.setOnAction(event -> {
+            try {
+                worldFXMLController.listPlacesWithFacility(FacilityType.GOLF_COURSE);
+            } catch (NullPointerException e) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.initOwner(stage);
+                a.setTitle("Warning");
+                a.setContentText("Firstly you need to generate data!!!");
                 a.showAndWait();
             }
         });

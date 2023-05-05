@@ -11,14 +11,15 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.riko.golftourplanner.controlers.WorldFXMLController">
    <AnchorPane fx:id="places_panel" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-         <TextField fx:id="searchPlaceInput" onKeyTyped="#filterPlaces" prefHeight="25.0" prefWidth="234.0" promptText="Search places" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="14.0" />
-         <Button fx:id="searchPlaceBtn" layoutX="256.0" mnemonicParsing="false" onAction="#filterPlaces" prefHeight="25.0" prefWidth="30.0" text="🔍" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+         <TextField fx:id="searchPlaceInput" prefHeight="25.0" prefWidth="497.0" promptText="Search places" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="94.0" AnchorPane.topAnchor="14.0" />
+         <Button fx:id="searchGolfCoursePlaces" layoutX="256.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="⛳" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
          <ListView fx:id="placesList" editable="true" layoutX="16.0" layoutY="49.0" prefHeight="200.0" prefWidth="270.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0" />
          <Label fx:id="infoLabel" alignment="CENTER" layoutX="14.0" layoutY="56.0" prefHeight="530.0" prefWidth="572.0" text="Nothing to see here, generate places!" textAlignment="CENTER" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0">
             <font>
                <Font size="14.0" />
             </font>
          </Label>
+         <Button fx:id="searchPlaceBtn" layoutX="518.0" layoutY="21.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="🔍" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="14.0" />
       </children>
    </AnchorPane>
    <Button fx:id="generatePlacesBtn" layoutX="488.0" layoutY="14.0" mnemonicParsing="false" text="Generate world" textAlignment="CENTER" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />

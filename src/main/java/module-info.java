@@ -9,4 +9,6 @@ module dev.riko.golftourplanner {
 
     opens dev.riko.golftourplanner.world.place to javafx.fxml;
     exports dev.riko.golftourplanner.world.place;
+    opens dev.riko.golftourplanner.world.facility to javafx.fxml;
+    exports dev.riko.golftourplanner.world.facility;
 }

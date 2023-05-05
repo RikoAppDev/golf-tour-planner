@@ -3,6 +3,7 @@ package dev.riko.golftourplanner.controlers;
 import dev.riko.golftourplanner.exeptions.NonAllowedInputException;
 import dev.riko.golftourplanner.utils.GenerateData;
 import dev.riko.golftourplanner.world.World;
+import dev.riko.golftourplanner.world.facility.FacilityType;
 import dev.riko.golftourplanner.world.place.Place;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -15,7 +16,6 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class WorldFXMLController {
     @FXML
@@ -50,6 +50,8 @@ public class WorldFXMLController {
     public AnchorPane places_panel;
     @FXML
     public Button closePathfindingInfoBtn;
+    @FXML
+    public Button searchGolfCoursePlaces;
     @FXML
     private Canvas worldMap;
 
@@ -95,7 +97,7 @@ public class WorldFXMLController {
             double x = scaleAxis(place.getLatitude());
             double y = scaleAxis(place.getLongitude());
 
-            markPlace(graphicsContext, x, y, Color.GREEN);
+            markPlace(graphicsContext, x, y, Color.BLACK);
             graphicsContext.setStroke(Color.GRAY);
 
             place.getPlaceConnections().forEach(connection -> {
@@ -126,20 +128,35 @@ public class WorldFXMLController {
         placesList.getItems().addAll(placeList);
     }
 
-    @FXML
-    public void filterPlaces() {
-        List<Place> places = World.getInstance().getPlaceList();
-        System.out.println(places);
+    public void listPlacesWithFacility(FacilityType facilityType) {
+        List<Place> facilityPlaces = World.getInstance().getPlacesWithFacility(facilityType);
 
-        places.forEach(place -> {
-            if (!place.getTitle().contains(searchPlaceInput.getCharacters())) {
-                places.remove(place);
-                System.out.println(place);
-            }
+        List<String> fpTitles = new ArrayList<>();
+
+        facilityPlaces.forEach(place -> fpTitles.add(place.placeInfo()));
+        listPlaces(fpTitles);
+
+        facilityPlaces.forEach(place -> {
+            double x = scaleAxis(place.getLatitude());
+            double y = scaleAxis(place.getLongitude());
+
+            GraphicsContext graphicsContext = worldMap.getGraphicsContext2D();
+            markPlace(graphicsContext, x, y, Color.GREEN);
         });
+    }
+
+    public void filterPlaces() {
+        List<Place> places = new ArrayList<>(World.getInstance().getPlaceList());
+        List<String> placeTitles = new ArrayList<>();
+
+        for (Place place : places) {
+            if (place.getTitle().toLowerCase().contains(searchPlaceInput.getCharacters().toString().toLowerCase())) {
+                placeTitles.add(place.placeInfo());
+            }
+        }
 
         placesList.getItems().clear();
-        placesList.getItems().addAll(placesList.getItems());
+        placesList.getItems().addAll(placeTitles);
     }
 
     public void showShortestPathOnMap(List<Place> shortestPath) {
