@@ -1,20 +1,21 @@
 package dev.riko.golftourplanner.controlers;
 
+import dev.riko.golftourplanner.exeptions.NonAllowedInputException;
 import dev.riko.golftourplanner.utils.GenerateData;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.place.Place;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class WorldFXMLController {
     @FXML
@@ -52,12 +53,14 @@ public class WorldFXMLController {
     @FXML
     private Canvas worldMap;
 
-    @FXML
-    public void generatePlaces() {
+    public void generatePlaces(Stage stage) {
         swapPanels();
 
         try {
             int amount = Integer.parseInt(placesAmountInput.getCharacters().toString());
+            if (amount < 100) {
+                throw new NonAllowedInputException();
+            }
             GenerateData generateData = new GenerateData(amount);
 
             World world = World.getInstance();
@@ -67,8 +70,18 @@ public class WorldFXMLController {
             world.getPlaceList().forEach(place -> placeTitles.add(place.placeInfo()));
             listPlaces(placeTitles);
             infoLabel.setVisible(false);
-        } catch (Exception e) {
-            System.out.println("Incorrect input!!!");
+        } catch (NonAllowedInputException e) {
+            Alert a = new Alert(AlertType.ERROR);
+            a.initOwner(stage);
+            a.setTitle("Error");
+            a.setContentText("The number of places cannot be lower than 100.");
+            a.showAndWait();
+        } catch (NumberFormatException e) {
+            Alert a = new Alert(AlertType.ERROR);
+            a.initOwner(stage);
+            a.setTitle("Error");
+            a.setContentText("This input field takes only numbers.");
+            a.showAndWait();
         }
     }
 

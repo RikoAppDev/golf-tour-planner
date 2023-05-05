@@ -1,6 +1,8 @@
 package dev.riko.golftourplanner;
 
 import dev.riko.golftourplanner.controlers.WorldFXMLController;
+import dev.riko.golftourplanner.exeptions.MissingDestinationException;
+import dev.riko.golftourplanner.exeptions.UnknownPlaceException;
 import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.place.Place;
@@ -8,6 +10,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -25,37 +28,67 @@ public class MainApp extends Application {
 
         World world = World.getInstance();
 
+        worldFXMLController.generatePlacesBtn.setOnAction(event -> worldFXMLController.generatePlaces(stage));
+
         worldFXMLController.navigateBtn.setOnAction(event -> {
-            worldFXMLController.places_panel.setVisible(false);
-            worldFXMLController.pathfindingInfo_panel.setVisible(true);
-            worldFXMLController.showPlacesOnMap(world.getPlaceList());
+            try {
+                worldFXMLController.showPlacesOnMap(world.getPlaceList());
 
-            String startDestination = String.valueOf(worldFXMLController.startDestinationInput.getCharacters()).strip();
-            String finalDestination = String.valueOf(worldFXMLController.finalDestinationInput.getCharacters()).strip();
+                String startDestination = String.valueOf(worldFXMLController.startDestinationInput.getCharacters()).strip();
+                String finalDestination = String.valueOf(worldFXMLController.finalDestinationInput.getCharacters()).strip();
+                if (startDestination.equals("") || finalDestination.equals("")) {
+                    throw new MissingDestinationException();
+                } else if (!world.searchCity(startDestination)) {
+                    throw new UnknownPlaceException(startDestination);
+                } else if (!world.searchCity(finalDestination)) {
+                    throw new UnknownPlaceException(finalDestination);
+                }
 
-            Place startPlace;
-            Place finalPlace;
+                worldFXMLController.places_panel.setVisible(false);
+                worldFXMLController.pathfindingInfo_panel.setVisible(true);
 
-            List<Place> startPlaces = world.getPlaces(startDestination);
-            startPlace = startPlaces.get(0);
-            List<Place> finalPlaces = world.getPlaces(finalDestination);
-            finalPlace = finalPlaces.get(0);
+                Place startPlace;
+                Place finalPlace;
 
-            SearchOptimalTrip optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
-            worldFXMLController.airDistanceLabel.setText("Air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getAirDistanceLength()) + "km.");
-            worldFXMLController.routeLength.setText("Length of the route: " + String.format("%.2f", optimalTrip.getShortestPathLength()) + "km");
+                List<Place> startPlaces = world.getPlaces(startDestination);
+                startPlace = startPlaces.get(0);
+                List<Place> finalPlaces = world.getPlaces(finalDestination);
+                finalPlace = finalPlaces.get(0);
 
-            List<String> routePlaces = new ArrayList<>();
+                SearchOptimalTrip optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
+                worldFXMLController.airDistanceLabel.setText("Air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getAirDistanceLength()) + "km.");
+                worldFXMLController.routeLength.setText("Length of the route: " + String.format("%.2f", optimalTrip.getShortestPathLength()) + "km");
 
-            for (Place place : optimalTrip.getShortestPath()) {
-                routePlaces.add(place.getTitle());
-                routePlaces.add("⬇️");
+                List<String> routePlaces = new ArrayList<>();
+
+                for (Place place : optimalTrip.getShortestPath()) {
+                    routePlaces.add(place.getTitle());
+                    routePlaces.add("⬇️");
+                }
+                routePlaces = routePlaces.subList(0, routePlaces.size() - 1);
+                worldFXMLController.shortestPathList.getItems().clear();
+                worldFXMLController.shortestPathList.getItems().addAll(routePlaces);
+
+                worldFXMLController.showShortestPathOnMap(optimalTrip.getShortestPath());
+            } catch (MissingDestinationException e) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.initOwner(stage);
+                a.setTitle("Warning");
+                a.setContentText("Route cannot be calculated because of missing destination.");
+                a.showAndWait();
+            } catch (NullPointerException e) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.initOwner(stage);
+                a.setTitle("Error");
+                a.setContentText("Firstly you need to generate data!!!");
+                a.showAndWait();
+            } catch (UnknownPlaceException e) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.initOwner(stage);
+                a.setTitle("Warning");
+                a.setContentText("City " + e.getMessage() + " does not exist.");
+                a.showAndWait();
             }
-            routePlaces = routePlaces.subList(0, routePlaces.size() - 1);
-            worldFXMLController.shortestPathList.getItems().clear();
-            worldFXMLController.shortestPathList.getItems().addAll(routePlaces);
-
-            worldFXMLController.showShortestPathOnMap(optimalTrip.getShortestPath());
         });
 
         Scene scene = new Scene(root, 1024, 720);

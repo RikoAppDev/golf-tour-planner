@@ -21,9 +21,9 @@
          </Label>
       </children>
    </AnchorPane>
-   <Button fx:id="generatePlacesBtn" layoutX="488.0" layoutY="14.0" mnemonicParsing="false" onAction="#generatePlaces" text="Generate world" textAlignment="CENTER" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+   <Button fx:id="generatePlacesBtn" layoutX="488.0" layoutY="14.0" mnemonicParsing="false" text="Generate world" textAlignment="CENTER" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
    <Canvas fx:id="worldMap" height="335.0" layoutX="309.0" layoutY="48.0" width="275.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0" />
-   <TextField fx:id="placesAmountInput" layoutX="330.0" layoutY="14.0" onAction="#generatePlaces" promptText="Amount of data" text="100" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="14.0" />
+   <TextField fx:id="placesAmountInput" layoutX="330.0" layoutY="14.0" promptText="Amount of data" text="100" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="14.0" />
    <TextField fx:id="startDestinationInput" layoutX="732.0" layoutY="14.0" promptText="Start destination" AnchorPane.rightAnchor="519.0" AnchorPane.topAnchor="14.0" />
    <TextField fx:id="finalDestinationInput" layoutX="889.0" layoutY="14.0" promptText="Final destination" AnchorPane.rightAnchor="362.0" AnchorPane.topAnchor="14.0" />
    <Button fx:id="navigateBtn" layoutX="1047.0" layoutY="14.0" mnemonicParsing="false" text="Navigate" textAlignment="CENTER" AnchorPane.rightAnchor="289.0" AnchorPane.topAnchor="14.0" />
