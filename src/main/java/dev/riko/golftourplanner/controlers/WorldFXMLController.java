@@ -55,12 +55,14 @@ public class WorldFXMLController {
     @FXML
     private Canvas worldMap;
 
+    private int amount;
+
     public void generatePlaces(Stage stage) {
         swapPanels();
 
         try {
-            int amount = Integer.parseInt(placesAmountInput.getCharacters().toString());
-            if (amount < 100) {
+            amount = Integer.parseInt(placesAmountInput.getCharacters().toString());
+            if (amount < 100 || 5000 < amount) {
                 throw new NonAllowedInputException();
             }
             GenerateData generateData = new GenerateData(amount);
@@ -76,7 +78,11 @@ public class WorldFXMLController {
             Alert a = new Alert(AlertType.ERROR);
             a.initOwner(stage);
             a.setTitle("Error");
-            a.setContentText("The number of places cannot be lower than 100.");
+            if (amount < 100) {
+                a.setContentText("The number of places cannot be lower than 100.");
+            } else if (amount > 5000) {
+                a.setContentText("The number of places cannot be greater than 5000.");
+            }
             a.showAndWait();
         } catch (NumberFormatException e) {
             Alert a = new Alert(AlertType.ERROR);
@@ -199,6 +205,6 @@ public class WorldFXMLController {
     }
 
     private double scaleAxis(double x) {
-        return x * 8.6;
+        return x * 100 / amount * 8.6;
     }
 }

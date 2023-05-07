@@ -21,8 +21,8 @@ public class GenerateData {
     private List<Place> generateData(int amount) {
         List<Place> data = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
-            double lat = random.nextDouble(0, 100);
-            double lon = random.nextDouble(0, 100);
+            double lat = random.nextDouble(0, amount);
+            double lon = random.nextDouble(0, amount);
 
             String title = String.valueOf((char) random.nextInt(65, 91));
             int titleLength = random.nextInt(1, 10);
