@@ -1,5 +1,6 @@
 package dev.riko.golftourplanner;
 
+import dev.riko.golftourplanner.exeptions.NoPathFound;
 import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
 import dev.riko.golftourplanner.world.place.Place;
 import dev.riko.golftourplanner.utils.GenerateData;
@@ -178,7 +179,12 @@ public class Main {
                     System.out.println(finalPlace.placeInfo());
                     System.out.println();
 
-                    SearchOptimalTrip optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace, exploringRate);
+                    SearchOptimalTrip optimalTrip = null;
+                    try {
+                        optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace, exploringRate);
+                    } catch (NoPathFound e) {
+                        throw new RuntimeException(e);
+                    }
                     System.out.println("Air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getAirDistanceLength()) + "km.");
                     System.out.println("The shortest route between places is: " + optimalTrip.printShortestPath());
                     System.out.println("Length of the route: " + String.format("%.2f", optimalTrip.getShortestPathLength()) + "km");

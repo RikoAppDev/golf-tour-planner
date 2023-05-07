@@ -1,5 +1,6 @@
 package dev.riko.golftourplanner.pathfinding;
 
+import dev.riko.golftourplanner.exeptions.NoPathFound;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.place.Place;
 
@@ -12,21 +13,21 @@ public class SearchOptimalTrip {
     private final Dijkstra dijkstra;
     private final List<Place> shortestPath;
 
-    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace, int exploringRate) {
+    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace, int exploringRate) throws NoPathFound {
         this.startPlace = startPlace;
         this.finalPlace = finalPlace;
         this.exploringRate = exploringRate;
 
         dijkstra = new Dijkstra(world, startPlace, finalPlace);
-        shortestPath = dijkstra.getShortestPath();
+        shortestPath = dijkstra.getTheShortestPath();
     }
 
-    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace) {
+    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace) throws NoPathFound {
         this.startPlace = startPlace;
         this.finalPlace = finalPlace;
 
         dijkstra = new Dijkstra(world, startPlace, finalPlace);
-        shortestPath = dijkstra.getShortestPath();
+        shortestPath = dijkstra.getTheShortestPath();
     }
 
     public String printShortestPath() {

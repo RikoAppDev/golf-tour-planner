@@ -1,27 +1,33 @@
 package dev.riko.golftourplanner.pathfinding;
 
+import dev.riko.golftourplanner.exeptions.NoPathFound;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.place.Place;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class Dijkstra {
-    private static class Node {
-        private static final int INFINITY = Integer.MAX_VALUE;
+public class Dijkstra implements GraphUtilFunctions<Dijkstra.Node> {
+    protected static class Node implements GraphNode {
+        private static final double INFINITY = Double.POSITIVE_INFINITY;
 
         private final Place place;
-        private double distanceValue;
+        private double distanceScore;
         private Node previousNode;
 
         public Node(Place place) {
             this.place = place;
-            distanceValue = INFINITY;
+            distanceScore = INFINITY;
+        }
+
+        @Override
+        public String getId() {
+            return String.valueOf(place.hashCode());
         }
     }
 
     private final List<Node> unvisitedNodes = new ArrayList<>();
-    private final List<Node> visitedNodes = new ArrayList<>();
+    private final Graph<Node> graph;
     private final Place startPlace;
     private final Place finalPlace;
 
@@ -30,57 +36,59 @@ public class Dijkstra {
         this.finalPlace = finalPlace;
 
         List<Place> places = world.getPlaceList();
+        Set<Node> graphNodes = new HashSet<>();
+        Map<String, Set<String>> graphMap = new HashMap<>();
 
         for (Place place : places) {
-            unvisitedNodes.add(new Node(place));
+            Node node = new Node(place);
+            graphNodes.add(node);
+            graphMap.put(
+                    node.getId(),
+                    place.getPlaceConnections().stream()
+                            .map(p -> String.valueOf(p.hashCode()))
+                            .collect(Collectors.toSet())
+            );
+            unvisitedNodes.add(node);
         }
+
+        graph = new Graph<>(graphNodes, graphMap);
     }
 
-    public List<Place> getShortestPath() {
-        Node currentNode = getNode(startPlace);
-        currentNode.distanceValue = 0;
+    public List<Place> getTheShortestPath() throws NoPathFound {
+        Node currentNode = graph.getNode(String.valueOf(startPlace.hashCode()));
+        currentNode.distanceScore = 0;
 
-        while (currentNode.place != finalPlace) {
-            for (Place place : currentNode.place.getPlaceConnections()) {
-                Node node = getNode(place);
+        while (true) {
+            currentNode = getMinDistanceScoreNode(unvisitedNodes);
+            unvisitedNodes.remove(currentNode);
 
-                if (node != null) {
-                    double distance = place.distanceFrom(currentNode.place);
-                    distance += currentNode.distanceValue;
-
-                    if (distance < node.distanceValue) {
-                        node.distanceValue = distance;
+            for (Node node : graph.getConnections(currentNode)) {
+                if (unvisitedNodes.contains(node)) {
+                    double newDistanceScore = calculateScore(currentNode, node);
+                    if (newDistanceScore < node.distanceScore) {
+                        node.distanceScore = newDistanceScore;
                         node.previousNode = currentNode;
                     }
                 }
             }
 
-            visitedNodes.add(currentNode);
-            unvisitedNodes.remove(currentNode);
-
-            currentNode = getMinDistanceNode(unvisitedNodes);
-        }
-
-        List<Place> shortestPath = new ArrayList<>();
-        shortestPath.add(currentNode.place);
-
-        while (currentNode.place != startPlace) {
-            currentNode = currentNode.previousNode;
-            try {
-                shortestPath.add(0, currentNode.place);
-            } catch (NullPointerException e) {
-                System.out.println("!!! Unexpected bug occurred, we are working on it !!!");
-                break;
+            if (currentNode.place == finalPlace) {
+                return buildShortestPath(graph.getNode(
+                        String.valueOf(finalPlace.hashCode())
+                )).stream()
+                        .map(node -> node.place)
+                        .collect(Collectors.toList());
+            }
+            if (getMinDistanceScoreNode(unvisitedNodes).distanceScore == Double.POSITIVE_INFINITY) {
+                throw new NoPathFound();
             }
         }
-
-        return shortestPath;
     }
 
-    private Node getMinDistanceNode(List<Node> unvisitedNodes) {
+    private Node getMinDistanceScoreNode(List<Node> unvisitedNodes) {
         Node minDistanceNode = unvisitedNodes.get(0);
         for (int i = 1; i < unvisitedNodes.size(); i++) {
-            if (unvisitedNodes.get(i).distanceValue < minDistanceNode.distanceValue) {
+            if (unvisitedNodes.get(i).distanceScore < minDistanceNode.distanceScore) {
                 minDistanceNode = unvisitedNodes.get(i);
             }
         }
@@ -88,14 +96,20 @@ public class Dijkstra {
         return minDistanceNode;
     }
 
-    private Node getNode(Place place) {
-        Node rNode = null;
+    @Override
+    public double calculateScore(Node currentNode, Node nextNode) {
+        return nextNode.place.distanceFrom(currentNode.place) + currentNode.distanceScore;
+    }
 
-        for (Node node : unvisitedNodes) {
-            if (node.place == place) {
-                rNode = node;
-            }
+    @Override
+    public List<Node> buildShortestPath(Node finalNode) {
+        List<Node> shortestPath = new ArrayList<>();
+
+        Node currentNode = finalNode;
+        while (currentNode != null) {
+            shortestPath.add(currentNode);
+            currentNode = currentNode.previousNode;
         }
-        return rNode;
+        return shortestPath;
     }
 }

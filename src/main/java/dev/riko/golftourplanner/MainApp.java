@@ -2,6 +2,7 @@ package dev.riko.golftourplanner;
 
 import dev.riko.golftourplanner.controlers.WorldFXMLController;
 import dev.riko.golftourplanner.exeptions.MissingDestinationException;
+import dev.riko.golftourplanner.exeptions.NoPathFound;
 import dev.riko.golftourplanner.exeptions.UnknownPlaceException;
 import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
 import dev.riko.golftourplanner.world.World;
@@ -91,6 +92,12 @@ public class MainApp extends Application {
                 a.initOwner(stage);
                 a.setTitle("Warning");
                 a.setContentText("City " + e.getMessage() + " does not exist.");
+                a.showAndWait();
+            } catch (NoPathFound e) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.initOwner(stage);
+                a.setTitle("Error");
+                a.setContentText("Shortest path cannot be found, try regenerate the map.");
                 a.showAndWait();
             }
         });
