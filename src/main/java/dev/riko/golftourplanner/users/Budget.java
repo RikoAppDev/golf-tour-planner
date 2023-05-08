@@ -1,4 +1,4 @@
-package dev.riko.golftourplanner.interfaces;
+package dev.riko.golftourplanner.users;
 
 public interface Budget {
     double getBudget();

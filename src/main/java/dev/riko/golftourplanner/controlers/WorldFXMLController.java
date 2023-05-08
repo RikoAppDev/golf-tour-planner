@@ -11,6 +11,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -53,12 +54,38 @@ public class WorldFXMLController {
     @FXML
     public Button searchGolfCoursePlaces;
     @FXML
+    public AnchorPane createTour_panel;
+    @FXML
+    public Button createTourBtn;
+    @FXML
+    public RadioButton team;
+    @FXML
+    public RadioButton solo;
+    @FXML
+    public TextField firstname;
+    @FXML
+    public TextField lastname;
+    @FXML
+    public TextField age;
+    @FXML
+    public TextField hcp;
+    @FXML
+    public TextField club;
+    public AnchorPane soloTypePanel;
+    @FXML
+    public Button closeTourBtn;
+    @FXML
+    public AnchorPane teamTypePanel;
+    @FXML
+    public VBox golfCourses;
+    @FXML
     private Canvas worldMap;
 
     private int amount;
 
     public void generatePlaces(Stage stage) {
         swapPanels();
+        createTourBtn.setVisible(true);
 
         try {
             amount = Integer.parseInt(placesAmountInput.getCharacters().toString());
@@ -125,6 +152,7 @@ public class WorldFXMLController {
         startDestinationInput.setText("");
         finalDestinationInput.setText("");
         pathfindingInfo_panel.setVisible(false);
+        createTour_panel.setVisible(false);
         places_panel.setVisible(true);
         shortestPathList.getItems().clear();
     }
@@ -132,6 +160,21 @@ public class WorldFXMLController {
     private void listPlaces(List<String> placeList) {
         placesList.getItems().clear();
         placesList.getItems().addAll(placeList);
+    }
+
+
+    public void highlightPlaceOnMap(List<Place> filteredPlaces) {
+        showPlacesOnMap(World.getInstance().getPlaceList());
+        if (!searchPlaceInput.getCharacters().toString().equals("")) {
+            Place showPlace = filteredPlaces.get(0);
+            double x = scaleAxis(showPlace.getLatitude());
+            double y = scaleAxis(showPlace.getLongitude());
+
+            GraphicsContext graphicsContext = worldMap.getGraphicsContext2D();
+            markPlace(graphicsContext, x, y, Color.RED);
+        } else {
+            showPlacesOnMap(World.getInstance().getPlaceList());
+        }
     }
 
     public void listPlacesWithFacility(FacilityType facilityType) {
@@ -151,18 +194,21 @@ public class WorldFXMLController {
         });
     }
 
-    public void filterPlaces() {
+    public List<Place> filterPlaces() {
         List<Place> places = new ArrayList<>(World.getInstance().getPlaceList());
         List<String> placeTitles = new ArrayList<>();
+        List<Place> filteredPlaces = new ArrayList<>();
 
         for (Place place : places) {
             if (place.getTitle().toLowerCase().contains(searchPlaceInput.getCharacters().toString().toLowerCase())) {
                 placeTitles.add(place.placeInfo());
+                filteredPlaces.add(place);
             }
         }
 
         placesList.getItems().clear();
         placesList.getItems().addAll(placeTitles);
+        return filteredPlaces;
     }
 
     public void showShortestPathOnMap(List<Place> shortestPath) {
@@ -206,5 +252,29 @@ public class WorldFXMLController {
 
     private double scaleAxis(double x) {
         return x * 100 / amount * 8.6;
+    }
+
+    @FXML
+    private void closeTourPanel() {
+        createTour_panel.setVisible(false);
+    }
+
+    @FXML
+    private void openTourPanel() {
+        createTour_panel.setVisible(true);
+        showPlacesOnMap(World.getInstance().getPlaceList());
+        listPlacesWithFacility(FacilityType.GOLF_COURSE);
+    }
+
+    @FXML
+    private void showSoloForm() {
+        teamTypePanel.setVisible(false);
+        soloTypePanel.setVisible(true);
+    }
+
+    @FXML
+    private void showTeamForm() {
+        soloTypePanel.setVisible(false);
+        teamTypePanel.setVisible(true);
     }
 }

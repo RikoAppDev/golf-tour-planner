@@ -104,7 +104,20 @@ public class MainApp extends Application {
 
         worldFXMLController.searchPlaceBtn.setOnAction(event -> {
             try {
-                worldFXMLController.filterPlaces();
+                List<Place> filteredPlaces = worldFXMLController.filterPlaces();
+                worldFXMLController.highlightPlaceOnMap(filteredPlaces);
+            } catch (NullPointerException e) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.initOwner(stage);
+                a.setTitle("Warning");
+                a.setContentText("Firstly you need to generate data!!!");
+                a.showAndWait();
+            }
+        });
+        worldFXMLController.searchPlaceInput.setOnAction(event -> {
+            try {
+                List<Place> filteredPlaces = worldFXMLController.filterPlaces();
+                worldFXMLController.highlightPlaceOnMap(filteredPlaces);
             } catch (NullPointerException e) {
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.initOwner(stage);

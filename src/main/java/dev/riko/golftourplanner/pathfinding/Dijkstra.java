@@ -110,6 +110,12 @@ public class Dijkstra implements GraphUtilFunctions<Dijkstra.Node> {
             shortestPath.add(currentNode);
             currentNode = currentNode.previousNode;
         }
-        return shortestPath;
+
+        List<Node> shortestPathCorrectOrder = new ArrayList<>();
+        for (int i = shortestPath.size() - 1; i >= 0; i--) {
+            shortestPathCorrectOrder.add(shortestPath.get(i));
+        }
+
+        return shortestPathCorrectOrder;
     }
 }

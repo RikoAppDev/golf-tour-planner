@@ -1,7 +1,5 @@
 package dev.riko.golftourplanner.users;
 
-import dev.riko.golftourplanner.interfaces.Budget;
-
 import java.util.ArrayList;
 import java.util.List;
 

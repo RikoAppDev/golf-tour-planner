@@ -1,7 +1,5 @@
 package dev.riko.golftourplanner.users;
 
-import dev.riko.golftourplanner.interfaces.Budget;
-
 public class Golfer extends Person implements Budget {
     private double budget;
     private double hcp;
