@@ -7,7 +7,7 @@ import dev.riko.golftourplanner.world.place.Place;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Dijkstra implements GraphUtilFunctions<Dijkstra.Node> {
+public class Dijkstra implements GraphUtilFunctions<Dijkstra.Node>, Container {
     protected static class Node implements GraphNode {
         private static final double INFINITY = Double.POSITIVE_INFINITY;
 
@@ -104,14 +104,41 @@ public class Dijkstra implements GraphUtilFunctions<Dijkstra.Node> {
     @Override
     public List<Node> buildShortestPath(Node finalNode) {
         List<Node> shortestPath = new ArrayList<>();
+        shortestPath.add(finalNode);
 
-        Node currentNode = finalNode;
-        while (currentNode != null) {
-            shortestPath.add(currentNode);
-            currentNode = currentNode.previousNode;
+        Iterator shortestPathIterator = getIterator(finalNode);
+        while (shortestPathIterator.hasNext()) {
+            shortestPath.add(shortestPathIterator.getNext());
         }
 
         Collections.reverse(shortestPath);
         return shortestPath;
+    }
+
+    private static class ShortestPathIterator implements Iterator {
+        Node actualNode;
+
+        public ShortestPathIterator(Node actualNode) {
+            this.actualNode = actualNode;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return actualNode.previousNode != null;
+        }
+
+        @Override
+        public Node getNext() {
+            if (this.hasNext()) {
+                actualNode = actualNode.previousNode;
+                return actualNode;
+            }
+            return null;
+        }
+    }
+
+    @Override
+    public Iterator getIterator(Node object) {
+        return new ShortestPathIterator(object);
     }
 }
