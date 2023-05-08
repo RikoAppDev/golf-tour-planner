@@ -112,6 +112,12 @@ public class MainApp extends Application {
                 a.setTitle("Warning");
                 a.setContentText("Firstly you need to generate data!!!");
                 a.showAndWait();
+            } catch (IndexOutOfBoundsException e) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.initOwner(stage);
+                a.setTitle("Warning");
+                a.setContentText("City does not exist!!!");
+                a.showAndWait();
             }
         });
         worldFXMLController.searchPlaceInput.setOnAction(event -> {
@@ -123,6 +129,12 @@ public class MainApp extends Application {
                 a.initOwner(stage);
                 a.setTitle("Warning");
                 a.setContentText("Firstly you need to generate data!!!");
+                a.showAndWait();
+            } catch (IndexOutOfBoundsException e) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.initOwner(stage);
+                a.setTitle("Warning");
+                a.setContentText("City does not exist!!!");
                 a.showAndWait();
             }
         });

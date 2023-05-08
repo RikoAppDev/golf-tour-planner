@@ -28,7 +28,7 @@ public class Place extends POI {
     }
 
     public String placeInfo() {
-        return "🏙️ " + getTitle() + " | 🛰️ [" + String.format("%.2f", getLatitude()) + "; " + String.format("%.2f", getLongitude()) + "] |  ️👨🏼‍👩🏼‍👧🏼‍👦🏼 " + getPopulation() + " | " + String.format("%.2f", getRating()) + " ⭐ | " + printFacilities() + " | " + getRoadsCount() + " 🛣️ " + printPlaceConnections();
+        return "🏙️ " + getTitle() + " | 🛰️ [" + String.format("%.2f", getLatitude()) + "; " + String.format("%.2f", getLongitude()) + "] |  ️👨🏼‍👩🏼‍👧🏼‍👦🏼 " + getPopulation() + " | " + String.format("%.2f", getRating()) + " ⭐ | " + printFacilities() + " | " + getPlaceConnections().size() + " 🛣️ " + printPlaceConnections();
     }
 
     private String printFacilities() {

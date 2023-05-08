@@ -12,36 +12,37 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.riko.golftourplanner.controlers.WorldFXMLController">
+   <Button fx:id="createTourBtn" mnemonicParsing="false" onAction="#openTourPanel" text="Create tour" textAlignment="CENTER" visible="false" AnchorPane.rightAnchor="720.0" AnchorPane.topAnchor="14.0" />
+   <TextField fx:id="placesAmountInput" layoutX="330.0" layoutY="14.0" promptText="Amount of data" text="100" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="14.0" />
+   <Button fx:id="generatePlacesBtn" layoutX="488.0" layoutY="14.0" mnemonicParsing="false" text="Generate world" textAlignment="CENTER" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+   <Canvas fx:id="worldMap" height="335.0" layoutX="309.0" layoutY="48.0" width="275.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0" />
+   <TextField fx:id="startDestinationInput" layoutX="700.4" layoutY="14.0" promptText="Start destination" AnchorPane.rightAnchor="555.0" AnchorPane.topAnchor="14.0" />
+   <TextField fx:id="finalDestinationInput" layoutX="889.0" layoutY="14.0" promptText="Final destination" AnchorPane.rightAnchor="362.0" AnchorPane.topAnchor="14.0" />
+   <Button fx:id="navigateBtn" layoutX="1047.0" layoutY="14.0" mnemonicParsing="false" text="Navigate" textAlignment="CENTER" AnchorPane.rightAnchor="289.0" AnchorPane.topAnchor="14.0" />
+   <Button fx:id="swapDestinations" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#swapDestinations" text="↔" textAlignment="CENTER" AnchorPane.rightAnchor="520.0" AnchorPane.topAnchor="14.0" />
    <AnchorPane fx:id="places_panel" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
          <TextField fx:id="searchPlaceInput" prefHeight="25.0" prefWidth="497.0" promptText="Search places" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="94.0" AnchorPane.topAnchor="14.0" />
+         <Button fx:id="searchPlaceBtn" layoutX="518.0" layoutY="21.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="🔍" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="14.0" />
          <Button fx:id="searchGolfCoursePlaces" layoutX="256.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="⛳" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
-         <ListView fx:id="placesList" editable="true" layoutX="16.0" layoutY="49.0" prefHeight="200.0" prefWidth="270.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0" />
+         <ListView fx:id="placesList" editable="true" focusTraversable="false" layoutX="16.0" layoutY="49.0" prefHeight="200.0" prefWidth="270.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0" />
          <Label fx:id="infoLabel" alignment="CENTER" layoutX="14.0" layoutY="56.0" prefHeight="530.0" prefWidth="572.0" text="Nothing to see here, generate places!" textAlignment="CENTER" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0">
             <font>
                <Font size="14.0" />
             </font>
          </Label>
-         <Button fx:id="searchPlaceBtn" layoutX="518.0" layoutY="21.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="🔍" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="14.0" />
       </children>
    </AnchorPane>
-   <Button fx:id="generatePlacesBtn" layoutX="488.0" layoutY="14.0" mnemonicParsing="false" text="Generate world" textAlignment="CENTER" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
-   <Canvas fx:id="worldMap" height="335.0" layoutX="309.0" layoutY="48.0" width="275.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="56.0" />
-   <TextField fx:id="placesAmountInput" layoutX="330.0" layoutY="14.0" promptText="Amount of data" text="100" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="14.0" />
-   <TextField fx:id="startDestinationInput" layoutX="732.0" layoutY="14.0" promptText="Start destination" AnchorPane.rightAnchor="519.0" AnchorPane.topAnchor="14.0" />
-   <TextField fx:id="finalDestinationInput" layoutX="889.0" layoutY="14.0" promptText="Final destination" AnchorPane.rightAnchor="362.0" AnchorPane.topAnchor="14.0" />
-   <Button fx:id="navigateBtn" layoutX="1047.0" layoutY="14.0" mnemonicParsing="false" text="Navigate" textAlignment="CENTER" AnchorPane.rightAnchor="289.0" AnchorPane.topAnchor="14.0" />
    <AnchorPane fx:id="pathfindingInfo_panel" layoutX="1.0" layoutY="-4.0" prefHeight="906.0" prefWidth="600.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-         <ListView fx:id="shortestPathList" editable="true" layoutX="14.0" layoutY="218.0" prefHeight="668.0" prefWidth="572.0" />
+         <ListView fx:id="shortestPathList" editable="true" focusTraversable="false" layoutX="14.0" layoutY="218.0" prefHeight="668.0" prefWidth="572.0" />
          <Label fx:id="airDistanceLabel" layoutX="77.0" layoutY="75.0" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="75.0" />
          <Label fx:id="routeLength" layoutX="77.0" layoutY="103.0" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="100.0" />
          <Label fx:id="shortestRouteLabel" layoutX="87.0" layoutY="113.0" prefHeight="17.0" prefWidth="208.0" text="The shortest route between places is:" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="125.0" />
          <Button fx:id="closePathfindingInfoBtn" mnemonicParsing="false" onAction="#closePathfindingInfo" prefHeight="25.0" prefWidth="30.0" text="❌" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
       </children>
    </AnchorPane>
-   <Button fx:id="createTourBtn" layoutX="653.0" layoutY="14.0" mnemonicParsing="false" onAction="#openTourPanel" text="Create tour" textAlignment="CENTER" visible="false" AnchorPane.rightAnchor="680.0" AnchorPane.topAnchor="14.0" />
-   <AnchorPane fx:id="createTour_panel" layoutX="11.0" layoutY="6.0" prefHeight="906.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+   <AnchorPane fx:id="createTour_panel" layoutX="11.0" layoutY="6.0" prefHeight="906.0" prefWidth="600.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
          <Button fx:id="closeTourBtn" mnemonicParsing="false" onAction="#closeTourPanel" prefHeight="25.0" prefWidth="30.0" text="❌" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
          <RadioButton fx:id="team" layoutX="332.0" layoutY="60.0" mnemonicParsing="false" onAction="#showTeamForm" text="Team" AnchorPane.leftAnchor="332.0" AnchorPane.topAnchor="60.0">

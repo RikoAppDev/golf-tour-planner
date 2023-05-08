@@ -277,4 +277,20 @@ public class WorldFXMLController {
         soloTypePanel.setVisible(false);
         teamTypePanel.setVisible(true);
     }
+
+    @FXML
+    private void swapDestinations() {
+        String startDestination = finalDestinationInput.getText().strip().toLowerCase();
+        String sFirst = String.valueOf(startDestination.charAt(0)).toUpperCase();
+        String finalDestination = startDestinationInput.getText().strip().toLowerCase();
+        String fFirst = String.valueOf(finalDestination.charAt(0)).toUpperCase();
+
+        startDestination = startDestination.substring(1);
+        finalDestination = finalDestination.substring(1);
+
+        startDestination = sFirst + startDestination;
+        finalDestination = fFirst + finalDestination;
+        startDestinationInput.setText(startDestination);
+        finalDestinationInput.setText(finalDestination);
+    }
 }

@@ -80,6 +80,7 @@ public class GenerateData {
                 for (Place potentialConnection : data) {
                     if (place != potentialConnection && potentialConnection.distanceFrom(place) <= distance && !place.getPlaceConnections().contains(potentialConnection)) {
                         place.addToPlaceConnections(potentialConnection);
+                        potentialConnection.addToPlaceConnections(place);
                         break;
                     }
                 }
