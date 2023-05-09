@@ -89,7 +89,7 @@ public class WorldFXMLController {
 
         try {
             amount = Integer.parseInt(placesAmountInput.getCharacters().toString());
-            if (amount < 100 || 5000 < amount) {
+            if (amount < 500 || 5000 < amount) {
                 throw new NonAllowedInputException();
             }
             GenerateData generateData = new GenerateData(amount);
@@ -105,7 +105,7 @@ public class WorldFXMLController {
             Alert a = new Alert(AlertType.ERROR);
             a.initOwner(stage);
             a.setTitle("Error");
-            if (amount < 100) {
+            if (amount < 500) {
                 a.setContentText("The number of places cannot be lower than 100.");
             } else if (amount > 5000) {
                 a.setContentText("The number of places cannot be greater than 5000.");

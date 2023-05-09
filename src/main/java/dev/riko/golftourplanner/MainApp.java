@@ -3,6 +3,7 @@ package dev.riko.golftourplanner;
 import dev.riko.golftourplanner.controlers.WorldFXMLController;
 import dev.riko.golftourplanner.exeptions.MissingDestinationException;
 import dev.riko.golftourplanner.exeptions.NoPathFound;
+import dev.riko.golftourplanner.exeptions.SamePlacesException;
 import dev.riko.golftourplanner.exeptions.UnknownPlaceException;
 import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
 import dev.riko.golftourplanner.world.World;
@@ -47,6 +48,8 @@ public class MainApp extends Application {
                     throw new UnknownPlaceException(startDestination);
                 } else if (!world.searchCity(finalDestination)) {
                     throw new UnknownPlaceException(finalDestination);
+                } else if (startDestination.equalsIgnoreCase(finalDestination)) {
+                    throw new SamePlacesException();
                 }
 
                 worldFXMLController.places_panel.setVisible(false);
@@ -67,7 +70,7 @@ public class MainApp extends Application {
                 List<String> routePlaces = new ArrayList<>();
 
                 for (Place place : optimalTrip.getShortestPath()) {
-                    routePlaces.add(place.getTitle());
+                    routePlaces.add(place.placeInfo());
                     routePlaces.add("⬇️");
                 }
                 routePlaces = routePlaces.subList(0, routePlaces.size() - 1);
@@ -98,6 +101,12 @@ public class MainApp extends Application {
                 a.initOwner(stage);
                 a.setTitle("Error");
                 a.setContentText("Shortest path cannot be found, try regenerate the map.");
+                a.showAndWait();
+            } catch (SamePlacesException e) {
+                Alert a = new Alert(Alert.AlertType.INFORMATION);
+                a.initOwner(stage);
+                a.setTitle("Information");
+                a.setContentText("Places can not be same.");
                 a.showAndWait();
             }
         });

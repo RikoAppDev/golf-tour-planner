@@ -52,7 +52,7 @@ public class Place extends POI {
     private String printPlaceConnections() {
         String connections = "";
         for (Place place : placeConnections) {
-            connections = connections.concat(place.getTitle() + "; ");
+            connections = connections.concat(place.getTitle() + ", ");
         }
         if (connections.equals(""))
             return connections;
