@@ -37,78 +37,91 @@ public class MainApp extends Application {
         worldFXMLController.placesAmountInput.setOnAction(event -> worldFXMLController.generatePlaces(stage));
 
         worldFXMLController.navigateBtn.setOnAction(event -> {
-            try {
-                worldFXMLController.showPlacesOnMap(world.getPlaceList());
+            Thread thread = new Thread(() -> {
+                try {
+                    String startDestination = String.valueOf(worldFXMLController.startDestinationInput.getCharacters()).strip();
+                    String finalDestination = String.valueOf(worldFXMLController.finalDestinationInput.getCharacters()).strip();
+                    if (startDestination.equals("") || finalDestination.equals("")) {
+                        throw new MissingDestinationException();
+                    } else if (!world.searchCity(startDestination)) {
+                        throw new UnknownPlaceException(startDestination);
+                    } else if (!world.searchCity(finalDestination)) {
+                        throw new UnknownPlaceException(finalDestination);
+                    } else if (startDestination.equalsIgnoreCase(finalDestination)) {
+                        throw new SamePlacesException();
+                    }
 
-                String startDestination = String.valueOf(worldFXMLController.startDestinationInput.getCharacters()).strip();
-                String finalDestination = String.valueOf(worldFXMLController.finalDestinationInput.getCharacters()).strip();
-                if (startDestination.equals("") || finalDestination.equals("")) {
-                    throw new MissingDestinationException();
-                } else if (!world.searchCity(startDestination)) {
-                    throw new UnknownPlaceException(startDestination);
-                } else if (!world.searchCity(finalDestination)) {
-                    throw new UnknownPlaceException(finalDestination);
-                } else if (startDestination.equalsIgnoreCase(finalDestination)) {
-                    throw new SamePlacesException();
+                    Place startPlace;
+                    Place finalPlace;
+
+                    List<Place> startPlaces = world.getPlaces(startDestination);
+                    startPlace = startPlaces.get(0);
+                    List<Place> finalPlaces = world.getPlaces(finalDestination);
+                    finalPlace = finalPlaces.get(0);
+
+                    SearchOptimalTrip optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
+                    Platform.runLater(() -> {
+                        worldFXMLController.showPlacesOnMap(world.getPlaceList());
+                        worldFXMLController.places_panel.setVisible(false);
+                        worldFXMLController.pathfindingInfo_panel.setVisible(true);
+                        worldFXMLController.airDistanceLabel.setText("Air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getAirDistanceLength()) + "km.");
+                        worldFXMLController.routeLength.setText("Length of the route: " + String.format("%.2f", optimalTrip.getShortestPathLength()) + "km");
+
+                        List<String> routePlaces = new ArrayList<>();
+
+                        for (Place place : optimalTrip.getShortestPath()) {
+                            routePlaces.add(place.placeInfo());
+                            routePlaces.add("⬇️");
+                        }
+                        routePlaces = routePlaces.subList(0, routePlaces.size() - 1);
+                        worldFXMLController.shortestPathList.getItems().clear();
+                        worldFXMLController.shortestPathList.getItems().addAll(routePlaces);
+
+                        worldFXMLController.showShortestPathOnMap(optimalTrip.getShortestPath());
+                    });
+                } catch (MissingDestinationException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("Route cannot be calculated because of missing destination.");
+                        a.showAndWait();
+                    });
+                } catch (NullPointerException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.ERROR);
+                        a.initOwner(stage);
+                        a.setTitle("Error");
+                        a.setContentText("Firstly you need to generate data!!!");
+                        a.showAndWait();
+                    });
+                } catch (UnknownPlaceException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("City " + e.getMessage() + " does not exist.");
+                        a.showAndWait();
+                    });
+                } catch (NoPathFound e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.ERROR);
+                        a.initOwner(stage);
+                        a.setTitle("Error");
+                        a.setContentText("Shortest path cannot be found, try regenerate the map.");
+                        a.showAndWait();
+                    });
+                } catch (SamePlacesException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.INFORMATION);
+                        a.initOwner(stage);
+                        a.setTitle("Information");
+                        a.setContentText("Places can not be same.");
+                        a.showAndWait();
+                    });
                 }
-
-                worldFXMLController.places_panel.setVisible(false);
-                worldFXMLController.pathfindingInfo_panel.setVisible(true);
-
-                Place startPlace;
-                Place finalPlace;
-
-                List<Place> startPlaces = world.getPlaces(startDestination);
-                startPlace = startPlaces.get(0);
-                List<Place> finalPlaces = world.getPlaces(finalDestination);
-                finalPlace = finalPlaces.get(0);
-
-                SearchOptimalTrip optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
-                worldFXMLController.airDistanceLabel.setText("Air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getAirDistanceLength()) + "km.");
-                worldFXMLController.routeLength.setText("Length of the route: " + String.format("%.2f", optimalTrip.getShortestPathLength()) + "km");
-
-                List<String> routePlaces = new ArrayList<>();
-
-                for (Place place : optimalTrip.getShortestPath()) {
-                    routePlaces.add(place.placeInfo());
-                    routePlaces.add("⬇️");
-                }
-                routePlaces = routePlaces.subList(0, routePlaces.size() - 1);
-                worldFXMLController.shortestPathList.getItems().clear();
-                worldFXMLController.shortestPathList.getItems().addAll(routePlaces);
-
-                worldFXMLController.showShortestPathOnMap(optimalTrip.getShortestPath());
-            } catch (MissingDestinationException e) {
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.initOwner(stage);
-                a.setTitle("Warning");
-                a.setContentText("Route cannot be calculated because of missing destination.");
-                a.showAndWait();
-            } catch (NullPointerException e) {
-                Alert a = new Alert(Alert.AlertType.ERROR);
-                a.initOwner(stage);
-                a.setTitle("Error");
-                a.setContentText("Firstly you need to generate data!!!");
-                a.showAndWait();
-            } catch (UnknownPlaceException e) {
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                a.initOwner(stage);
-                a.setTitle("Warning");
-                a.setContentText("City " + e.getMessage() + " does not exist.");
-                a.showAndWait();
-            } catch (NoPathFound e) {
-                Alert a = new Alert(Alert.AlertType.ERROR);
-                a.initOwner(stage);
-                a.setTitle("Error");
-                a.setContentText("Shortest path cannot be found, try regenerate the map.");
-                a.showAndWait();
-            } catch (SamePlacesException e) {
-                Alert a = new Alert(Alert.AlertType.INFORMATION);
-                a.initOwner(stage);
-                a.setTitle("Information");
-                a.setContentText("Places can not be same.");
-                a.showAndWait();
-            }
+            });
+            thread.start();
         });
 
         worldFXMLController.searchPlaceBtn.setOnAction(event -> {

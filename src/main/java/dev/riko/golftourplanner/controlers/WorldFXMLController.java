@@ -5,6 +5,7 @@ import dev.riko.golftourplanner.utils.GenerateData;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.facility.FacilityType;
 import dev.riko.golftourplanner.world.place.Place;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -84,40 +85,50 @@ public class WorldFXMLController {
     private int amount;
 
     public void generatePlaces(Stage stage) {
-        swapPanels();
-        createTourBtn.setVisible(true);
+        Thread thread = new Thread(() -> {
+            try {
+                amount = Integer.parseInt(placesAmountInput.getCharacters().toString());
+                if (amount < 500 || 5000 < amount) {
+                    throw new NonAllowedInputException();
+                }
+                GenerateData generateData = new GenerateData(amount);
 
-        try {
-            amount = Integer.parseInt(placesAmountInput.getCharacters().toString());
-            if (amount < 500 || 5000 < amount) {
-                throw new NonAllowedInputException();
-            }
-            GenerateData generateData = new GenerateData(amount);
+                World world = World.getInstance();
+                world.setPlaceList(generateData.getData());
 
-            World world = World.getInstance();
-            world.setPlaceList(generateData.getData());
-            showPlacesOnMap(world.getPlaceList());
-            List<String> placeTitles = new ArrayList<>();
-            world.getPlaceList().forEach(place -> placeTitles.add(place.placeInfo()));
-            listPlaces(placeTitles);
-            infoLabel.setVisible(false);
-        } catch (NonAllowedInputException e) {
-            Alert a = new Alert(AlertType.ERROR);
-            a.initOwner(stage);
-            a.setTitle("Error");
-            if (amount < 500) {
-                a.setContentText("The number of places cannot be lower than 100.");
-            } else if (amount > 5000) {
-                a.setContentText("The number of places cannot be greater than 5000.");
+                List<String> placeTitles = new ArrayList<>();
+                world.getPlaceList().forEach(place -> placeTitles.add(place.placeInfo()));
+
+                Platform.runLater(() -> {
+                    swapPanels();
+                    createTourBtn.setVisible(true);
+                    showPlacesOnMap(world.getPlaceList());
+                    listPlaces(placeTitles);
+                    infoLabel.setVisible(false);
+                });
+            } catch (NonAllowedInputException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(AlertType.ERROR);
+                    a.initOwner(stage);
+                    a.setTitle("Error");
+                    if (amount < 500) {
+                        a.setContentText("The number of places cannot be lower than 100.");
+                    } else if (amount > 5000) {
+                        a.setContentText("The number of places cannot be greater than 5000.");
+                    }
+                    a.showAndWait();
+                });
+            } catch (NumberFormatException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(AlertType.ERROR);
+                    a.initOwner(stage);
+                    a.setTitle("Error");
+                    a.setContentText("This input field takes only numbers.");
+                    a.showAndWait();
+                });
             }
-            a.showAndWait();
-        } catch (NumberFormatException e) {
-            Alert a = new Alert(AlertType.ERROR);
-            a.initOwner(stage);
-            a.setTitle("Error");
-            a.setContentText("This input field takes only numbers.");
-            a.showAndWait();
-        }
+        });
+        thread.start();
     }
 
     public void showPlacesOnMap(List<Place> placeList) {
@@ -280,17 +291,21 @@ public class WorldFXMLController {
 
     @FXML
     private void swapDestinations() {
-        String startDestination = finalDestinationInput.getText().strip().toLowerCase();
-        String sFirst = String.valueOf(startDestination.charAt(0)).toUpperCase();
-        String finalDestination = startDestinationInput.getText().strip().toLowerCase();
-        String fFirst = String.valueOf(finalDestination.charAt(0)).toUpperCase();
+        try {
+            String startDestination = finalDestinationInput.getText().strip().toLowerCase();
+            String sFirst = String.valueOf(startDestination.charAt(0)).toUpperCase();
+            String finalDestination = startDestinationInput.getText().strip().toLowerCase();
+            String fFirst = String.valueOf(finalDestination.charAt(0)).toUpperCase();
 
-        startDestination = startDestination.substring(1);
-        finalDestination = finalDestination.substring(1);
+            startDestination = startDestination.substring(1);
+            finalDestination = finalDestination.substring(1);
 
-        startDestination = sFirst + startDestination;
-        finalDestination = fFirst + finalDestination;
-        startDestinationInput.setText(startDestination);
-        finalDestinationInput.setText(finalDestination);
+            startDestination = sFirst + startDestination;
+            finalDestination = fFirst + finalDestination;
+            startDestinationInput.setText(startDestination);
+            finalDestinationInput.setText(finalDestination);
+        } catch (RuntimeException e) {
+            System.out.println("Nothing to swap!");
+        }
     }
 }
