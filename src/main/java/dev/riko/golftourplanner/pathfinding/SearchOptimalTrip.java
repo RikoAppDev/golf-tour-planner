@@ -6,6 +6,10 @@ import dev.riko.golftourplanner.world.place.Place;
 
 import java.util.List;
 
+/**
+ * This class represents a search for the optimal trip between two places in a world map,
+ * using Dijkstra's algorithm to find the shortest path between the places.
+ */
 public class SearchOptimalTrip {
     private final Place startPlace;
     private final Place finalPlace;
@@ -13,6 +17,16 @@ public class SearchOptimalTrip {
     private final Dijkstra dijkstra;
     private final List<Place> shortestPath;
 
+    /**
+     * Creates a new instance of SearchOptimalTrip with the given parameters, using {@link Dijkstra}'s algorithm to
+     * find the shortest path between the start place and final place in the world map.
+     *
+     * @param world         The world map where the search is performed.
+     * @param startPlace    The starting place for the search.
+     * @param finalPlace    The final place for the search.
+     * @param exploringRate The exploring rate for Dijkstra's algorithm.
+     * @throws NoPathFound If no path can be found between the start place and final place in the world map.
+     */
     public SearchOptimalTrip(World world, Place startPlace, Place finalPlace, int exploringRate) throws NoPathFound {
         this.startPlace = startPlace;
         this.finalPlace = finalPlace;
@@ -22,6 +36,15 @@ public class SearchOptimalTrip {
         shortestPath = dijkstra.getTheShortestPath();
     }
 
+    /**
+     * Creates a new instance of SearchOptimalTrip with the given parameters, using {@link Dijkstra}'s algorithm to
+     * find the shortest path between the start place and final place in the world map.
+     *
+     * @param world      The world map where the search is performed.
+     * @param startPlace The starting place for the search.
+     * @param finalPlace The final place for the search.
+     * @throws NoPathFound If no path can be found between the start place and final place in the world map.
+     */
     public SearchOptimalTrip(World world, Place startPlace, Place finalPlace) throws NoPathFound {
         this.startPlace = startPlace;
         this.finalPlace = finalPlace;
@@ -30,17 +53,11 @@ public class SearchOptimalTrip {
         shortestPath = dijkstra.getTheShortestPath();
     }
 
-    public String printShortestPath() {
-        String s = "";
-
-        for (Place place : shortestPath) {
-            s = s.concat(place.getTitle() + " -> ");
-        }
-        s = s.substring(0, s.length() - 4);
-
-        return s;
-    }
-
+    /**
+     * Calculates the length of the shortest path found by Dijkstra's algorithm.
+     *
+     * @return The length of the shortest path found by Dijkstra's algorithm.
+     */
     public double getShortestPathLength() {
         double length = 0;
         List<Place> placeList = getShortestPath();
@@ -54,14 +71,31 @@ public class SearchOptimalTrip {
         return length;
     }
 
+    /**
+     * Calculates the air distance between the start place and final place.
+     *
+     * @return The air distance between the start place and final place.
+     */
     public double getAirDistanceLength() {
         return calculateLength(startPlace, finalPlace);
     }
 
+    /**
+     * Calculates the distance between two places using their distanceFrom method.
+     *
+     * @param first  The first place.
+     * @param second The second place.
+     * @return The distance between the two places.
+     */
     private double calculateLength(Place first, Place second) {
         return first.distanceFrom(second);
     }
 
+    /**
+     * Gets the shortest path between the start and final places.
+     *
+     * @return the shortest path
+     */
     public List<Place> getShortestPath() {
         return shortestPath;
     }

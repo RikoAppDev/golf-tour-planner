@@ -19,6 +19,13 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code WorldFXMLController} class is the controller class for the WorldFXML.fxml file. This class is responsible for managing user input and updating the graphical user interface based on that input.
+ * <p>
+ * The class contains methods for generating places, showing places on a map, swapping panels, highlighting places on a map, listing places with a facility, filtering places, and showing the shortest path on a map.
+ * <p>
+ * Additionally, the class contains a nested NonAllowedInputException class that is thrown when the user inputs an invalid number of places.
+ */
 public class WorldFXMLController {
     @FXML
     public TextField searchPlaceInput;
@@ -81,9 +88,18 @@ public class WorldFXMLController {
     public VBox golfCourses;
     @FXML
     private Canvas worldMap;
-
+    /**
+     * An integer representing the number of places to generate.
+     */
     private int amount;
 
+    /**
+     * Generates a specified number of places, sets the generated places in the {@link World} class, and updates the graphical user interface to show the generated places on a map, list the generated places, and hide the info label.
+     * <p>
+     * If the user inputs an invalid number of places, an error message is displayed on the graphical user interface.
+     *
+     * @param stage The Stage object representing the graphical user interface window.
+     */
     public void generatePlaces(Stage stage) {
         Thread thread = new Thread(() -> {
             try {
@@ -131,6 +147,11 @@ public class WorldFXMLController {
         thread.start();
     }
 
+    /**
+     * Shows a list of places on a map with connections between the places.
+     *
+     * @param placeList The list of places to show on the map.
+     */
     public void showPlacesOnMap(List<Place> placeList) {
         GraphicsContext graphicsContext = worldMap.getGraphicsContext2D();
         graphicsContext.clearRect(0, 0, worldMap.getWidth(), worldMap.getHeight());
@@ -153,12 +174,20 @@ public class WorldFXMLController {
         });
     }
 
+    /**
+     * Closes the pathfinding info panel and displays the places panel.
+     * Also shows all the places on the map.
+     */
     @FXML
     private void closePathfindingInfo() {
         swapPanels();
         showPlacesOnMap(World.getInstance().getPlaceList());
     }
 
+    /**
+     * Swaps the visibility of the panels to display the places panel
+     * and clear the input fields and list of shortest paths.
+     */
     public void swapPanels() {
         startDestinationInput.setText("");
         finalDestinationInput.setText("");
@@ -168,12 +197,23 @@ public class WorldFXMLController {
         shortestPathList.getItems().clear();
     }
 
+    /**
+     * Lists the places on the places list view.
+     *
+     * @param placeList the list of place titles to be displayed
+     */
     private void listPlaces(List<String> placeList) {
         placesList.getItems().clear();
         placesList.getItems().addAll(placeList);
     }
 
-
+    /**
+     * Highlights the first place in the filtered places list on the map by changing its color to red.
+     * <p>
+     * If the search place input field is empty, it shows all the places on the map.
+     *
+     * @param filteredPlaces the list of filtered places
+     */
     public void highlightPlaceOnMap(List<Place> filteredPlaces) {
         showPlacesOnMap(World.getInstance().getPlaceList());
         if (!searchPlaceInput.getCharacters().toString().equals("")) {
@@ -188,6 +228,11 @@ public class WorldFXMLController {
         }
     }
 
+    /**
+     * Lists the places with the specified facility type on the places list view and highlights them on the map by changing their color to green.
+     *
+     * @param facilityType the facility type to be filtered
+     */
     public void listPlacesWithFacility(FacilityType facilityType) {
         List<Place> facilityPlaces = World.getInstance().getPlacesWithFacility(facilityType);
 
@@ -205,6 +250,13 @@ public class WorldFXMLController {
         });
     }
 
+    /**
+     * Filters the places by matching the place titles with the characters in the search place input field.
+     * <p>
+     * Updates the places list view with the filtered places and returns the filtered places.
+     *
+     * @return the list of filtered places
+     */
     public List<Place> filterPlaces() {
         List<Place> places = new ArrayList<>(World.getInstance().getPlaceList());
         List<String> placeTitles = new ArrayList<>();
@@ -222,6 +274,12 @@ public class WorldFXMLController {
         return filteredPlaces;
     }
 
+
+    /**
+     * This method displays the shortest path on the map by marking the places on the map with colors and drawing lines between them.
+     *
+     * @param shortestPath the list of places that are part of the shortest path.
+     */
     public void showShortestPathOnMap(List<Place> shortestPath) {
         GraphicsContext graphicsContext = worldMap.getGraphicsContext2D();
 
@@ -256,20 +314,40 @@ public class WorldFXMLController {
         graphicsContext.strokeLine(x + 7, y + 7, x1 + 7, y1 + 7);
     }
 
+    /**
+     * Marks a place on a graphics context with a given color at the specified coordinates.
+     *
+     * @param graphicsContext the graphics context where the place will be marked
+     * @param x               the x coordinate where the place will be marked
+     * @param y               the y coordinate where the place will be marked
+     * @param color           the color of the place marker
+     */
     private void markPlace(GraphicsContext graphicsContext, double x, double y, Color color) {
         graphicsContext.setFill(color);
         graphicsContext.fillOval(x, y, 14, 14);
     }
 
+    /**
+     * Scales a given axis value based on the total amount and a fixed scale factor.
+     *
+     * @param x the value to be scaled
+     * @return the scaled value
+     */
     private double scaleAxis(double x) {
         return x * 100 / amount * 8.6;
     }
 
+    /**
+     * Closes the panel with tour creation.
+     */
     @FXML
     private void closeTourPanel() {
         createTour_panel.setVisible(false);
     }
 
+    /**
+     * Opens the create tour panel, shows all places with golf courses on the map, and lists places with a golf course facility.
+     */
     @FXML
     private void openTourPanel() {
         createTour_panel.setVisible(true);
@@ -277,18 +355,27 @@ public class WorldFXMLController {
         listPlacesWithFacility(FacilityType.GOLF_COURSE);
     }
 
+    /**
+     * Shows the solo type form and hides the team type form.
+     */
     @FXML
     private void showSoloForm() {
         teamTypePanel.setVisible(false);
         soloTypePanel.setVisible(true);
     }
 
+    /**
+     * Shows the team type form and hides the solo type form.
+     */
     @FXML
     private void showTeamForm() {
         soloTypePanel.setVisible(false);
         teamTypePanel.setVisible(true);
     }
 
+    /**
+     * Swaps the start and final destinations entered by the user in the input fields.
+     */
     @FXML
     private void swapDestinations() {
         try {

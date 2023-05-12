@@ -22,8 +22,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The MainApp class is responsible for handling the JavaFX application lifecycle and user interface events.
+ */
 public class MainApp extends Application {
-
+    /**
+     * This method is responsible for starting the JavaFX application by loading the world.fxml file, setting the controller and initializing the user interface elements.
+     *
+     * @param stage The primary stage for the JavaFX application.
+     * @throws IOException Thrown when an I/O exception to some sort has occurred.
+     */
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("world.fxml"));
@@ -196,6 +204,11 @@ public class MainApp extends Application {
         stage.show();
     }
 
+    /**
+     * Launches the JavaFX application.
+     *
+     * @param args the command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         launch();
     }
