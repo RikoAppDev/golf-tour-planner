@@ -72,18 +72,19 @@ public class GenerateData {
             float rating = random.nextFloat(0, 10);
 
             List<Facility> facilityList = new ArrayList<>();
-            facilityList.add(new Facility(SHOP));
-            if (random.nextBoolean()) facilityList.add(new Facility(GAS_STATION));
-            if (random.nextBoolean()) facilityList.add(new Facility(HOSTEL));
-            if (rating >= 2) if (random.nextBoolean()) facilityList.add(new Facility(SUPERMARKET));
-            if (rating >= 3) if (random.nextBoolean()) facilityList.add(new Facility(RESTAURANTS));
+            facilityList.add(new Facility(SHOP, lat, lon));
+            if (random.nextBoolean()) facilityList.add(new Facility(GAS_STATION, lat, lon));
+            if (random.nextBoolean()) facilityList.add(new Facility(HOSTEL, lat, lon));
+            if (rating >= 2) if (random.nextBoolean()) facilityList.add(new Facility(SUPERMARKET, lat, lon));
+            if (rating >= 3) if (random.nextBoolean()) facilityList.add(new Facility(RESTAURANTS, lat, lon));
             if (rating >= 6) {
-                if (random.nextBoolean()) facilityList.add(new Facility(HOTEL));
-                if (random.nextBoolean()) facilityList.add(new Facility(SHOPPING_MALL));
+                if (random.nextBoolean()) facilityList.add(new Facility(HOTEL, lat, lon));
+                if (random.nextBoolean()) facilityList.add(new Facility(SHOPPING_MALL, lat, lon));
             }
             if (rating >= 8) {
-                if (random.nextBoolean()) facilityList.add(new Facility(GOLF_COURSE));
-                if (random.nextBoolean()) facilityList.add(new Facility(AIRPORT));
+                if (random.nextBoolean())
+                    facilityList.add(new Facility(GOLF_COURSE, lat, lon, title + "'s golf club", random.nextFloat(0, 10)));
+                if (random.nextBoolean()) facilityList.add(new Facility(AIRPORT, lat, lon));
             }
             float facilityPercentage = facilityList.size() * 100f / FacilityType.values().length;
             int population = 0;
