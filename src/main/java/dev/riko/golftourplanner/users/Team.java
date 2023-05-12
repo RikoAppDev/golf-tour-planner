@@ -4,22 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class representing a golf team.
+ * The Team class represents a team of golfers participating in a golf tournament.
+ * <p>
+ * Each team has a name and a list of Golfers who are part of the team. Teams also have a budget which can be used to cover expenses related to participating in the tournament.
  */
-public class Team implements Budget {
+public class Team extends Participant {
+    /**
+     * The name of the team.
+     */
     private String name;
-    private double budget;
+    /**
+     * A list of Golfers on the team.
+     */
     private List<Golfer> golfers = new ArrayList<>();
 
     /**
-     * Constructs a new Team object with the given name and budget.
+     * Constructs a new Team object with the given name.
      *
-     * @param name   the name of the team
-     * @param budget the budget of the team
+     * @param name the name of the team
      */
-    public Team(String name, double budget) {
+    public Team(String name) {
         this.name = name;
-        this.budget = budget;
     }
 
     /**
@@ -65,25 +70,5 @@ public class Team implements Budget {
      */
     public void setGolfers(List<Golfer> golfers) {
         this.golfers = golfers;
-    }
-
-    @Override
-    public void setBudget(double budget) {
-
-    }
-
-    @Override
-    public void increaseBudget(double budget) {
-
-    }
-
-    @Override
-    public void decreaseBudget(double budget) {
-
-    }
-
-    @Override
-    public double getBudget() {
-        return 0;
     }
 }

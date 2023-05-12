@@ -1,11 +1,28 @@
 package dev.riko.golftourplanner.users;
 
 /**
- * A class representing a golfer, extending the Person class and implementing the Budget interface.
+ * A class representing a Golfer, which is a type of Participant with a first name, last name, age, handicap, and golf club.
  */
-public class Golfer extends Person implements Budget {
-    private double budget;
+public class Golfer extends Participant {
+    /**
+     * The first name of the golfer.
+     */
+    private final String firstname;
+    /**
+     * The last name of the golfer.
+     */
+    private final String lastname;
+    /**
+     * The age of the golfer.
+     */
+    private final int age;
+    /**
+     * The handicap of the golfer.
+     */
     private double hcp;
+    /**
+     * The golf club of the golfer.
+     */
     private String club;
 
     /**
@@ -14,53 +31,15 @@ public class Golfer extends Person implements Budget {
      * @param firstname the first name of the golfer
      * @param lastname  the last name of the golfer
      * @param age       the age of the golfer
-     * @param budget    the budget of the golfer
      * @param hcp       the handicap of the golfer
      * @param club      the golf club of the golfer
      */
-    public Golfer(String firstname, String lastname, int age, double budget, double hcp, String club) {
-        super(firstname, lastname, age);
-        this.budget = budget;
+    public Golfer(String firstname, String lastname, int age, double hcp, String club) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.age = age;
         this.hcp = hcp;
         this.club = club;
-    }
-
-    /**
-     * Returns the budget of the golfer.
-     *
-     * @return the budget of the golfer
-     */
-    public double getBudget() {
-        return budget;
-    }
-
-    /**
-     * Sets the budget of the golfer to the specified value.
-     *
-     * @param budget the new budget of the golfer
-     */
-    public void setBudget(double budget) {
-        this.budget = budget;
-    }
-
-    /**
-     * Increases the budget of the golfer by the specified amount.
-     *
-     * @param budget the amount to increase the budget by
-     */
-    @Override
-    public void increaseBudget(double budget) {
-
-    }
-
-    /**
-     * Decreases the budget of the golfer by the specified amount.
-     *
-     * @param budget the amount to decrease the budget by
-     */
-    @Override
-    public void decreaseBudget(double budget) {
-
     }
 
     /**
@@ -97,5 +76,32 @@ public class Golfer extends Person implements Budget {
      */
     public void setClub(String club) {
         this.club = club;
+    }
+
+    /**
+     * Returns the first name of the golfer.
+     *
+     * @return the first name of the golfer
+     */
+    public String getFirstname() {
+        return firstname;
+    }
+
+    /**
+     * Returns the last name of the golfer.
+     *
+     * @return the last name of the golfer
+     */
+    public String getLastname() {
+        return lastname;
+    }
+
+    /**
+     * Returns the age of the golfer.
+     *
+     * @return the age of the golfer
+     */
+    public int getAge() {
+        return age;
     }
 }

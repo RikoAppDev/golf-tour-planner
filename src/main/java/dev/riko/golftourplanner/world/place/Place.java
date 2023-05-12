@@ -170,4 +170,19 @@ public class Place extends POI {
     public int getRoadsCount() {
         return roadsCount;
     }
+
+    /**
+     * Returns the facility of the given facility type if it exists in the facility list.
+     *
+     * @param facilityType the type of facility to be retrieved
+     * @return the facility of the given facility type, or null if not found
+     */
+    public Facility getFacility(FacilityType facilityType) {
+        for (Facility facility : facilityList) {
+            if (facility.getFacilityType() == facilityType) {
+                return facility;
+            }
+        }
+        return null;
+    }
 }
