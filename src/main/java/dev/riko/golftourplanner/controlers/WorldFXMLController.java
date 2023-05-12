@@ -12,7 +12,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -85,7 +84,21 @@ public class WorldFXMLController {
     @FXML
     public AnchorPane teamTypePanel;
     @FXML
-    public VBox golfCourses;
+    public ListView<String> golfCoursesList;
+    @FXML
+    public Button generateTourBtn;
+    @FXML
+    public TextField budgetField;
+    @FXML
+    public ToggleGroup tourType;
+    @FXML
+    public TextField startPlace;
+    @FXML
+    public TextField finalPlace;
+    @FXML
+    public TextField teamSize;
+    @FXML
+    public TextField teamName;
     @FXML
     private Canvas worldMap;
     /**
@@ -229,7 +242,7 @@ public class WorldFXMLController {
     }
 
     /**
-     * Lists the places with the specified facility type on the places list view and highlights them on the map by changing their color to green.
+     * Lists the places with the specified facility type on the places list view, golf tour list view and highlights them on the map by changing their color to green.
      *
      * @param facilityType the facility type to be filtered
      */
@@ -240,6 +253,7 @@ public class WorldFXMLController {
 
         facilityPlaces.forEach(place -> fpTitles.add(place.placeInfo()));
         listPlaces(fpTitles);
+        listGolfCourses(fpTitles);
 
         facilityPlaces.forEach(place -> {
             double x = scaleAxis(place.getLatitude());
@@ -248,6 +262,16 @@ public class WorldFXMLController {
             GraphicsContext graphicsContext = worldMap.getGraphicsContext2D();
             markPlace(graphicsContext, x, y, Color.GREEN);
         });
+    }
+
+    /**
+     * Clears the current items in the golfCoursesList and adds the items in the given placeList
+     *
+     * @param placeList a List of Strings containing the names of the golf courses to be displayed
+     */
+    private void listGolfCourses(List<String> placeList) {
+        golfCoursesList.getItems().clear();
+        golfCoursesList.getItems().addAll(placeList);
     }
 
     /**

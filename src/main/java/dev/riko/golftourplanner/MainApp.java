@@ -1,11 +1,12 @@
 package dev.riko.golftourplanner;
 
 import dev.riko.golftourplanner.controlers.WorldFXMLController;
-import dev.riko.golftourplanner.exeptions.MissingDestinationException;
-import dev.riko.golftourplanner.exeptions.NoPathFound;
-import dev.riko.golftourplanner.exeptions.SamePlacesException;
-import dev.riko.golftourplanner.exeptions.UnknownPlaceException;
+import dev.riko.golftourplanner.exeptions.*;
 import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
+import dev.riko.golftourplanner.users.GolfTour;
+import dev.riko.golftourplanner.users.Golfer;
+import dev.riko.golftourplanner.users.Participant;
+import dev.riko.golftourplanner.users.Team;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.facility.FacilityType;
 import dev.riko.golftourplanner.world.place.Place;
@@ -15,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -190,6 +192,164 @@ public class MainApp extends Application {
                 a.setTitle("Warning");
                 a.setContentText("Firstly you need to generate data!!!");
                 a.showAndWait();
+            }
+        });
+
+        worldFXMLController.generateTourBtn.setOnAction(event -> {
+            try {
+                RadioButton selected = (RadioButton) worldFXMLController.tourType.getSelectedToggle();
+                String b = worldFXMLController.budgetField.getText();
+                if (b.strip().length() == 0) {
+                    throw new MissingBudgetException();
+                }
+                double budget = Double.parseDouble(b);
+
+                Participant participant;
+                if (selected.getText().equals("Solo")) {
+                    String firstname = worldFXMLController.firstname.getText();
+                    String lastname = worldFXMLController.lastname.getText();
+                    if (firstname.strip().length() == 0 || lastname.strip().length() == 0) {
+                        throw new MissingNameException();
+                    }
+
+                    String a = worldFXMLController.age.getText();
+                    if (a.strip().length() == 0) {
+                        throw new MissingAgeException();
+                    }
+                    int age = Integer.parseInt(a);
+
+                    String h = worldFXMLController.hcp.getText();
+                    if (h.strip().length() == 0) {
+                        throw new MissingHcpException();
+                    }
+                    double hcp = Double.parseDouble(h);
+                    String club = worldFXMLController.club.getText().strip();
+
+                    participant = new Golfer(firstname, lastname, age, hcp, club);
+                } else {
+                    String teamName = worldFXMLController.teamName.getText().strip();
+                    if (teamName.length() == 0) {
+                        throw new MissingNameException();
+                    }
+
+                    String teamSize = worldFXMLController.teamSize.getText().strip();
+                    if (teamSize.length() == 0) {
+                        throw new IncorrectTeamSizeException();
+                    }
+                    int teamCount;
+                    try {
+                        teamCount = Integer.parseInt(teamSize);
+                        if (teamCount < 1) {
+                            throw new IncorrectTeamSizeException();
+                        }
+                    } catch (NumberFormatException e) {
+                        throw new IncorrectTeamSizeException();
+                    }
+
+                    List<Golfer> teamGolfers = new ArrayList<>();
+                    for (int i = 0; i < teamCount; i++) {
+                        teamGolfers.add(new Golfer());
+                    }
+                    participant = new Team(teamName);
+
+                    ((Team) participant).setGolfers(teamGolfers);
+                }
+                participant.setBudget(budget);
+
+                String startPlace = worldFXMLController.startPlace.getText();
+                String finalPlace = worldFXMLController.finalPlace.getText();
+                if (startPlace.strip().length() == 0 || finalPlace.strip().length() == 0) {
+                    throw new MissingDestinationException();
+                }
+
+                if (!world.searchCity(startPlace)) {
+                    throw new UnknownPlaceException(startPlace);
+                } else if (!world.searchCity(finalPlace)) {
+                    throw new UnknownPlaceException(finalPlace);
+                }
+
+                Place sp = world.getPlaces(startPlace).get(0);
+                Place fp = world.getPlaces(finalPlace).get(0);
+
+                List<Place> selectedGolfCoursePlaces = new ArrayList<>();
+
+                if (sp.equals(fp)) {
+                    GolfTour golfTour = new GolfTour(participant, sp, selectedGolfCoursePlaces);
+                } else {
+                    GolfTour golfTour = new GolfTour(participant, sp, fp, selectedGolfCoursePlaces);
+                }
+            } catch (NoPathFound e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.ERROR);
+                    a.initOwner(stage);
+                    a.setTitle("Error");
+                    a.setContentText("Shortest path cannot be found, try regenerate the map.");
+                    a.showAndWait();
+                });
+            } catch (MissingBudgetException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.initOwner(stage);
+                    a.setTitle("Warning");
+                    a.setContentText("Set the budget!");
+                    a.showAndWait();
+                });
+            } catch (MissingDestinationException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.initOwner(stage);
+                    a.setTitle("Warning");
+                    a.setContentText("Tour cannot be generated because of missing destination.");
+                    a.showAndWait();
+                });
+            } catch (MissingNameException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.initOwner(stage);
+                    a.setTitle("Warning");
+                    a.setContentText("Name is empty.");
+                    a.showAndWait();
+                });
+            } catch (MissingAgeException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.initOwner(stage);
+                    a.setTitle("Warning");
+                    a.setContentText("Age is empty.");
+                    a.showAndWait();
+                });
+            } catch (MissingHcpException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.initOwner(stage);
+                    a.setTitle("Warning");
+                    a.setContentText("HCP is empty.");
+                    a.showAndWait();
+                });
+            } catch (NumberFormatException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.initOwner(stage);
+                    a.setTitle("Warning");
+                    a.setContentText("Wrong number format. (e.g. budget -> 99.99, hcp -> 54.0)");
+                    a.showAndWait();
+                });
+            } catch (UnknownPlaceException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.initOwner(stage);
+                    a.setTitle("Warning");
+                    a.setContentText("City " + e.getMessage() + " does not exist.");
+                    a.showAndWait();
+                });
+            } catch (IncorrectTeamSizeException e) {
+                Platform.runLater(() -> {
+                    Alert a = new Alert(Alert.AlertType.WARNING);
+                    a.initOwner(stage);
+                    a.setTitle("Warning");
+                    a.setContentText("Team size is empty or incorrect.");
+                    a.showAndWait();
+                });
             }
         });
 

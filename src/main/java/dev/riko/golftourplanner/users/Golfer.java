@@ -43,6 +43,17 @@ public class Golfer extends Participant {
     }
 
     /**
+     * Constructs an anonymous golfer.
+     */
+    public Golfer() {
+        firstname = null;
+        lastname = null;
+        age = 0;
+        hcp = 0;
+        club = null;
+    }
+
+    /**
      * Returns the handicap of the golfer.
      *
      * @return the handicap of the golfer
