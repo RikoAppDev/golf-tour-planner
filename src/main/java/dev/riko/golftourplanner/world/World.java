@@ -91,20 +91,18 @@ public class World {
     }
 
     /**
-     * Returns a list of places for a given city title.
+     * Returns a place for a given city title.
      *
      * @param city the name of the city to search for
-     * @return a list of places for a given city title
+     * @return a place for a given city title
      */
-    public List<Place> getPlaces(String city) {
-        List<Place> places = new ArrayList<>();
+    public Place getPlace(String city) {
         for (Place p : placeList) {
             if (p.getTitle().equalsIgnoreCase(city)) {
-                places.add(p);
+                return p;
             }
         }
-
-        return places;
+        return null;
     }
 
     /**

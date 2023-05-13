@@ -47,6 +47,8 @@ public class GenerateData {
      */
     private List<Place> generateData(int amount) {
         List<Place> data = new ArrayList<>();
+        Set<String> titles = new HashSet<>();
+
         for (int i = 0; i < amount; i++) {
             double lat = random.nextDouble(0, amount);
             double lon = random.nextDouble(0, amount);
@@ -97,7 +99,11 @@ public class GenerateData {
             int roadsCount = (int) Math.ceil(rating / 1.5);
             if (roadsCount < 3) roadsCount = 3;
 
-            data.add(new Place(lat, lon, title, rating, facilityList, population, roadsCount));
+            if (titles.add(title)) {
+                data.add(new Place(lat, lon, title, rating, facilityList, population, roadsCount));
+            } else {
+                i--;
+            }
         }
 
 

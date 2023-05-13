@@ -55,7 +55,6 @@
          <Label layoutX="82.0" layoutY="99.0" text="Set budget:" AnchorPane.leftAnchor="82.0" AnchorPane.topAnchor="100.0" />
          <TextField fx:id="budgetField" layoutX="181.0" layoutY="96.0" promptText="1000,00" AnchorPane.leftAnchor="200.0" AnchorPane.topAnchor="96.0" />
          <Label layoutX="358.0" layoutY="100.0" text="€" AnchorPane.leftAnchor="358.0" AnchorPane.rightAnchor="235.0" AnchorPane.topAnchor="100.0" />
-         <ListView fx:id="golfCoursesList" focusTraversable="false" prefHeight="441.0" prefWidth="550.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="350.0" />
          <AnchorPane fx:id="soloTypePanel" layoutX="200.0" layoutY="350.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="150.0">
             <children>
                <TextField fx:id="firstname" layoutX="25.0" layoutY="40.0" promptText="Firstname" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="40.0" />
@@ -78,6 +77,7 @@
          <TextField fx:id="club" prefHeight="25.0" prefWidth="324.0" promptText="Club" AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="230.0" />
          <TextField fx:id="startPlace" promptText="Start destination" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="270.0" />
          <TextField fx:id="finalPlace" promptText="Final destination" AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="270.0" />
+         <ListView fx:id="golfCoursesList" focusTraversable="false" prefHeight="441.0" prefWidth="550.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="350.0" />
          <Button fx:id="generateTourBtn" mnemonicParsing="false" text="Generate tour" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" />
       </children>
    </AnchorPane>

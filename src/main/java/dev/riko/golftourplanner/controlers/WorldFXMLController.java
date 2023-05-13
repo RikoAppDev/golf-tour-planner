@@ -1,5 +1,6 @@
 package dev.riko.golftourplanner.controlers;
 
+import dev.riko.golftourplanner.MainApp;
 import dev.riko.golftourplanner.exeptions.NonAllowedInputException;
 import dev.riko.golftourplanner.utils.GenerateData;
 import dev.riko.golftourplanner.world.World;
@@ -16,6 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -84,7 +87,7 @@ public class WorldFXMLController {
     @FXML
     public AnchorPane teamTypePanel;
     @FXML
-    public ListView<String> golfCoursesList;
+    public ListView<MainApp.GolfCourseListViewItem> golfCoursesList;
     @FXML
     public Button generateTourBtn;
     @FXML
@@ -127,6 +130,7 @@ public class WorldFXMLController {
 
                 List<String> placeTitles = new ArrayList<>();
                 world.getPlaceList().forEach(place -> placeTitles.add(place.placeInfo()));
+                Collections.sort(placeTitles);
 
                 Platform.runLater(() -> {
                     swapPanels();
@@ -242,7 +246,7 @@ public class WorldFXMLController {
     }
 
     /**
-     * Lists the places with the specified facility type on the places list view, golf tour list view and highlights them on the map by changing their color to green.
+     * Lists the places with the specified facility type on the places list view, golf tour list view and highlights them on the map by changing their color to green using {@link WorldFXMLController#showPlacesWithFacility(FacilityType)} method.
      *
      * @param facilityType the facility type to be filtered
      */
@@ -253,7 +257,18 @@ public class WorldFXMLController {
 
         facilityPlaces.forEach(place -> fpTitles.add(place.placeInfo()));
         listPlaces(fpTitles);
-        listGolfCourses(fpTitles);
+        listGolfCourses(facilityPlaces);
+
+        showPlacesWithFacility(facilityType);
+    }
+
+    /**
+     * This method displays all places on the world map that have a particular facility.
+     *
+     * @param facilityType the type of facility to filter places by
+     */
+    private void showPlacesWithFacility(FacilityType facilityType) {
+        List<Place> facilityPlaces = World.getInstance().getPlacesWithFacility(facilityType);
 
         facilityPlaces.forEach(place -> {
             double x = scaleAxis(place.getLatitude());
@@ -265,13 +280,32 @@ public class WorldFXMLController {
     }
 
     /**
-     * Clears the current items in the golfCoursesList and adds the items in the given placeList
+     * Updates the golf courses list view with the given list of places using {@link dev.riko.golftourplanner.MainApp.GolfCourseListViewItem} class to handle checkboxes listener.
+     * <p>
+     * Highlights places with golf course on the map.
      *
-     * @param placeList a List of Strings containing the names of the golf courses to be displayed
+     * @param placeList The list of places to display in the golf courses list view
      */
-    private void listGolfCourses(List<String> placeList) {
+    private void listGolfCourses(List<Place> placeList) {
         golfCoursesList.getItems().clear();
-        golfCoursesList.getItems().addAll(placeList);
+        for (Place p : placeList) {
+            MainApp.GolfCourseListViewItem golfCourse = new MainApp.GolfCourseListViewItem(FacilityType.GOLF_COURSE, p.getLatitude(), p.getLongitude(), p.getTitle(), p.getRating(), p.placeInfo(), false);
+
+            golfCourse.onProperty().addListener((obs, wasOn, isNowOn) -> {
+                double x = scaleAxis(p.getLatitude());
+                double y = scaleAxis(p.getLongitude());
+
+                GraphicsContext graphicsContext = worldMap.getGraphicsContext2D();
+                if (wasOn) {
+                    markPlace(graphicsContext, x, y, Color.GREEN);
+                } else {
+                    markPlace(graphicsContext, x, y, Color.RED);
+                }
+                System.out.println(golfCourse.getName() + " changed on state from " + wasOn + " to " + isNowOn);
+            });
+
+            golfCoursesList.getItems().add(golfCourse);
+        }
     }
 
     /**
@@ -292,6 +326,8 @@ public class WorldFXMLController {
                 filteredPlaces.add(place);
             }
         }
+
+        Collections.sort(placeTitles);
 
         placesList.getItems().clear();
         placesList.getItems().addAll(placeTitles);
@@ -367,6 +403,8 @@ public class WorldFXMLController {
     @FXML
     private void closeTourPanel() {
         createTour_panel.setVisible(false);
+        showPlacesOnMap(World.getInstance().getPlaceList());
+        filterPlaces();
     }
 
     /**
@@ -417,6 +455,21 @@ public class WorldFXMLController {
             finalDestinationInput.setText(finalDestination);
         } catch (RuntimeException e) {
             System.out.println("Nothing to swap!");
+        }
+    }
+
+    /**
+     * Shows the given golf tour on the map by displaying the places with golf courses and
+     * the shortest path between them.
+     *
+     * @param golfTour A list of lists of Places representing the golf tour, where each inner list
+     */
+    public void showGolfTour(List<List<Place>> golfTour) {
+        showPlacesOnMap(World.getInstance().getPlaceList());
+        showPlacesWithFacility(FacilityType.GOLF_COURSE);
+
+        for (List<Place> shortestPath : golfTour) {
+            showShortestPathOnMap(shortestPath);
         }
     }
 }

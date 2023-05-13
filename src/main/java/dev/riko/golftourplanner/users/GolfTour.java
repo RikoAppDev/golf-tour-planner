@@ -6,6 +6,7 @@ import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.facility.FacilityType;
 import dev.riko.golftourplanner.world.place.Place;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,8 +51,9 @@ public class GolfTour {
         this.placeWithGolfCourses = placeWithGolfCourses;
         this.startDestination = startDestination;
         this.finalDestination = startDestination;
+        this.golfTour = new ArrayList<>();
 
-        golfTour = planGolfTour();
+        planGolfTour();
     }
 
     /**
@@ -67,18 +69,17 @@ public class GolfTour {
         this.placeWithGolfCourses = placeWithGolfCourses;
         this.startDestination = startDestination;
         this.finalDestination = finalDestination;
+        this.golfTour = new ArrayList<>();
 
-        golfTour = planGolfTour();
+        planGolfTour();
     }
 
     /**
      * Plans the golf tour by finding the shortest path between each pair of places with a golf course.
-     *
-     * @return a list of lists representing the golf tour
      */
-    private List<List<Place>> planGolfTour() throws NoPathFound {
+    private void planGolfTour() throws NoPathFound {
         placeWithGolfCourses.add(0, startDestination);
-        placeWithGolfCourses.add(placeWithGolfCourses.size() - 1, finalDestination);
+        placeWithGolfCourses.add(placeWithGolfCourses.size(), finalDestination);
 
         World world = World.getInstance();
 
@@ -97,6 +98,7 @@ public class GolfTour {
             golfTour.add(searchOptimalTrip.getShortestPath());
             tourLength += searchOptimalTrip.getShortestPathLength();
 
+            System.out.println(placeWithGolfCourses);
             double fee = placeWithGolfCourses.get(i).getFacility(FacilityType.GOLF_COURSE).getRating() * 10;
             if (participant instanceof Team) {
                 participant.decreaseBudget(fee * ((Team) participant).getGolfers().size());
@@ -104,8 +106,6 @@ public class GolfTour {
                 participant.decreaseBudget(fee);
             }
         }
-
-        return golfTour;
     }
 
     /**

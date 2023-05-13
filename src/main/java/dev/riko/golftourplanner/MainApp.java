@@ -8,15 +8,21 @@ import dev.riko.golftourplanner.users.Golfer;
 import dev.riko.golftourplanner.users.Participant;
 import dev.riko.golftourplanner.users.Team;
 import dev.riko.golftourplanner.world.World;
+import dev.riko.golftourplanner.world.facility.Facility;
 import dev.riko.golftourplanner.world.facility.FacilityType;
 import dev.riko.golftourplanner.world.place.Place;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -61,18 +67,14 @@ public class MainApp extends Application {
                         throw new SamePlacesException();
                     }
 
-                    Place startPlace;
-                    Place finalPlace;
-
-                    List<Place> startPlaces = world.getPlaces(startDestination);
-                    startPlace = startPlaces.get(0);
-                    List<Place> finalPlaces = world.getPlaces(finalDestination);
-                    finalPlace = finalPlaces.get(0);
+                    Place startPlace = world.getPlace(startDestination);
+                    Place finalPlace = world.getPlace(finalDestination);
 
                     SearchOptimalTrip optimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
                     Platform.runLater(() -> {
                         worldFXMLController.showPlacesOnMap(world.getPlaceList());
                         worldFXMLController.places_panel.setVisible(false);
+                        worldFXMLController.createTour_panel.setVisible(false);
                         worldFXMLController.pathfindingInfo_panel.setVisible(true);
                         worldFXMLController.airDistanceLabel.setText("Air distance from " + startPlace.getTitle() + " to " + finalPlace.getTitle() + " is " + String.format("%.2f", optimalTrip.getAirDistanceLength()) + "km.");
                         worldFXMLController.routeLength.setText("Length of the route: " + String.format("%.2f", optimalTrip.getShortestPathLength()) + "km");
@@ -195,162 +197,175 @@ public class MainApp extends Application {
             }
         });
 
+        worldFXMLController.golfCoursesList.setCellFactory(CheckBoxListCell.forListView(GolfCourseListViewItem::onProperty));
+
         worldFXMLController.generateTourBtn.setOnAction(event -> {
-            try {
-                RadioButton selected = (RadioButton) worldFXMLController.tourType.getSelectedToggle();
-                String b = worldFXMLController.budgetField.getText();
-                if (b.strip().length() == 0) {
-                    throw new MissingBudgetException();
-                }
-                double budget = Double.parseDouble(b);
-
-                Participant participant;
-                if (selected.getText().equals("Solo")) {
-                    String firstname = worldFXMLController.firstname.getText();
-                    String lastname = worldFXMLController.lastname.getText();
-                    if (firstname.strip().length() == 0 || lastname.strip().length() == 0) {
-                        throw new MissingNameException();
+            Thread thread = new Thread(() -> {
+                try {
+                    RadioButton selected = (RadioButton) worldFXMLController.tourType.getSelectedToggle();
+                    String b = worldFXMLController.budgetField.getText();
+                    if (b.strip().length() == 0) {
+                        throw new MissingBudgetException();
                     }
+                    double budget = Double.parseDouble(b);
 
-                    String a = worldFXMLController.age.getText();
-                    if (a.strip().length() == 0) {
-                        throw new MissingAgeException();
-                    }
-                    int age = Integer.parseInt(a);
+                    Participant participant;
+                    if (selected.getText().equals("Solo")) {
+                        String firstname = worldFXMLController.firstname.getText();
+                        String lastname = worldFXMLController.lastname.getText();
+                        if (firstname.strip().length() == 0 || lastname.strip().length() == 0) {
+                            throw new MissingNameException();
+                        }
 
-                    String h = worldFXMLController.hcp.getText();
-                    if (h.strip().length() == 0) {
-                        throw new MissingHcpException();
-                    }
-                    double hcp = Double.parseDouble(h);
-                    String club = worldFXMLController.club.getText().strip();
+                        String a = worldFXMLController.age.getText();
+                        if (a.strip().length() == 0) {
+                            throw new MissingAgeException();
+                        }
+                        int age = Integer.parseInt(a);
 
-                    participant = new Golfer(firstname, lastname, age, hcp, club);
-                } else {
-                    String teamName = worldFXMLController.teamName.getText().strip();
-                    if (teamName.length() == 0) {
-                        throw new MissingNameException();
-                    }
+                        String h = worldFXMLController.hcp.getText();
+                        if (h.strip().length() == 0) {
+                            throw new MissingHcpException();
+                        }
+                        double hcp = Double.parseDouble(h);
+                        String club = worldFXMLController.club.getText().strip();
 
-                    String teamSize = worldFXMLController.teamSize.getText().strip();
-                    if (teamSize.length() == 0) {
-                        throw new IncorrectTeamSizeException();
-                    }
-                    int teamCount;
-                    try {
-                        teamCount = Integer.parseInt(teamSize);
-                        if (teamCount < 1) {
+                        participant = new Golfer(firstname, lastname, age, hcp, club);
+                    } else {
+                        String teamName = worldFXMLController.teamName.getText().strip();
+                        if (teamName.length() == 0) {
+                            throw new MissingNameException();
+                        }
+
+                        String teamSize = worldFXMLController.teamSize.getText().strip();
+                        if (teamSize.length() == 0) {
                             throw new IncorrectTeamSizeException();
                         }
-                    } catch (NumberFormatException e) {
-                        throw new IncorrectTeamSizeException();
+                        int teamCount;
+                        try {
+                            teamCount = Integer.parseInt(teamSize);
+                            if (teamCount < 1) {
+                                throw new IncorrectTeamSizeException();
+                            }
+                        } catch (NumberFormatException e) {
+                            throw new IncorrectTeamSizeException();
+                        }
+
+                        List<Golfer> teamGolfers = new ArrayList<>();
+                        for (int i = 0; i < teamCount; i++) {
+                            teamGolfers.add(new Golfer());
+                        }
+                        participant = new Team(teamName);
+
+                        ((Team) participant).setGolfers(teamGolfers);
+                    }
+                    participant.setBudget(budget);
+
+                    String startPlace = worldFXMLController.startPlace.getText();
+                    String finalPlace = worldFXMLController.finalPlace.getText();
+                    if (startPlace.strip().length() == 0 || finalPlace.strip().length() == 0) {
+                        throw new MissingDestinationException();
                     }
 
-                    List<Golfer> teamGolfers = new ArrayList<>();
-                    for (int i = 0; i < teamCount; i++) {
-                        teamGolfers.add(new Golfer());
+                    if (!world.searchCity(startPlace)) {
+                        throw new UnknownPlaceException(startPlace);
+                    } else if (!world.searchCity(finalPlace)) {
+                        throw new UnknownPlaceException(finalPlace);
                     }
-                    participant = new Team(teamName);
 
-                    ((Team) participant).setGolfers(teamGolfers);
+                    Place sp = world.getPlace(startPlace);
+                    Place fp = world.getPlace(finalPlace);
+
+                    List<Place> selectedGolfCoursePlaces = new ArrayList<>();
+
+                    for (GolfCourseListViewItem golfCourse : worldFXMLController.golfCoursesList.getItems()) {
+                        if (golfCourse.isOn()) {
+                            selectedGolfCoursePlaces.add(world.getPlace(golfCourse.getTitle()));
+                        }
+                    }
+
+                    GolfTour golfTour;
+                    if (sp.equals(fp)) {
+                        golfTour = new GolfTour(participant, sp, selectedGolfCoursePlaces);
+                    } else {
+                        golfTour = new GolfTour(participant, sp, fp, selectedGolfCoursePlaces);
+                    }
+                    worldFXMLController.showGolfTour(golfTour.getGolfTour());
+                } catch (NoPathFound e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.ERROR);
+                        a.initOwner(stage);
+                        a.setTitle("Error");
+                        a.setContentText("Shortest path cannot be found, try regenerate the map.");
+                        a.showAndWait();
+                    });
+                } catch (MissingBudgetException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("Set the budget!");
+                        a.showAndWait();
+                    });
+                } catch (MissingDestinationException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("Tour cannot be generated because of missing destination.");
+                        a.showAndWait();
+                    });
+                } catch (MissingNameException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("Name is empty.");
+                        a.showAndWait();
+                    });
+                } catch (MissingAgeException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("Age is empty.");
+                        a.showAndWait();
+                    });
+                } catch (MissingHcpException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("HCP is empty.");
+                        a.showAndWait();
+                    });
+                } catch (NumberFormatException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("Wrong number format. (e.g. budget -> 99.99, hcp -> 54.0)");
+                        a.showAndWait();
+                    });
+                } catch (UnknownPlaceException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("City " + e.getMessage() + " does not exist.");
+                        a.showAndWait();
+                    });
+                } catch (IncorrectTeamSizeException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("Team size is empty or incorrect.");
+                        a.showAndWait();
+                    });
                 }
-                participant.setBudget(budget);
-
-                String startPlace = worldFXMLController.startPlace.getText();
-                String finalPlace = worldFXMLController.finalPlace.getText();
-                if (startPlace.strip().length() == 0 || finalPlace.strip().length() == 0) {
-                    throw new MissingDestinationException();
-                }
-
-                if (!world.searchCity(startPlace)) {
-                    throw new UnknownPlaceException(startPlace);
-                } else if (!world.searchCity(finalPlace)) {
-                    throw new UnknownPlaceException(finalPlace);
-                }
-
-                Place sp = world.getPlaces(startPlace).get(0);
-                Place fp = world.getPlaces(finalPlace).get(0);
-
-                List<Place> selectedGolfCoursePlaces = new ArrayList<>();
-
-                if (sp.equals(fp)) {
-                    GolfTour golfTour = new GolfTour(participant, sp, selectedGolfCoursePlaces);
-                } else {
-                    GolfTour golfTour = new GolfTour(participant, sp, fp, selectedGolfCoursePlaces);
-                }
-            } catch (NoPathFound e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.ERROR);
-                    a.initOwner(stage);
-                    a.setTitle("Error");
-                    a.setContentText("Shortest path cannot be found, try regenerate the map.");
-                    a.showAndWait();
-                });
-            } catch (MissingBudgetException e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.initOwner(stage);
-                    a.setTitle("Warning");
-                    a.setContentText("Set the budget!");
-                    a.showAndWait();
-                });
-            } catch (MissingDestinationException e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.initOwner(stage);
-                    a.setTitle("Warning");
-                    a.setContentText("Tour cannot be generated because of missing destination.");
-                    a.showAndWait();
-                });
-            } catch (MissingNameException e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.initOwner(stage);
-                    a.setTitle("Warning");
-                    a.setContentText("Name is empty.");
-                    a.showAndWait();
-                });
-            } catch (MissingAgeException e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.initOwner(stage);
-                    a.setTitle("Warning");
-                    a.setContentText("Age is empty.");
-                    a.showAndWait();
-                });
-            } catch (MissingHcpException e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.initOwner(stage);
-                    a.setTitle("Warning");
-                    a.setContentText("HCP is empty.");
-                    a.showAndWait();
-                });
-            } catch (NumberFormatException e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.initOwner(stage);
-                    a.setTitle("Warning");
-                    a.setContentText("Wrong number format. (e.g. budget -> 99.99, hcp -> 54.0)");
-                    a.showAndWait();
-                });
-            } catch (UnknownPlaceException e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.initOwner(stage);
-                    a.setTitle("Warning");
-                    a.setContentText("City " + e.getMessage() + " does not exist.");
-                    a.showAndWait();
-                });
-            } catch (IncorrectTeamSizeException e) {
-                Platform.runLater(() -> {
-                    Alert a = new Alert(Alert.AlertType.WARNING);
-                    a.initOwner(stage);
-                    a.setTitle("Warning");
-                    a.setContentText("Team size is empty or incorrect.");
-                    a.showAndWait();
-                });
-            }
+            });
+            thread.start();
         });
 
         Scene scene = new Scene(root, 1024, 720);
@@ -362,6 +377,95 @@ public class MainApp extends Application {
         stage.setMinWidth(640);
         stage.setMinHeight(480);
         stage.show();
+    }
+
+    /**
+     * A custom ListView item representing a golf course facility.
+     */
+    public static class GolfCourseListViewItem extends Facility {
+        private final StringProperty name = new SimpleStringProperty();
+        private final BooleanProperty on = new SimpleBooleanProperty();
+
+        /**
+         * Constructs a new GolfCourseListViewItem with the specified facility type, latitude, longitude, title, rating, name, and on state.
+         *
+         * @param facilityType The type of facility, must be FacilityType.GOLF_COURSE.
+         * @param latitude     The latitude of the golf course.
+         * @param longitude    The longitude of the golf course.
+         * @param title        The title of the golf course.
+         * @param rating       The rating of the golf course.
+         * @param name         The name of the golf course.
+         * @param on           The on state of the golf course.
+         */
+        public GolfCourseListViewItem(FacilityType facilityType, double latitude, double longitude, String title, float rating, String name, boolean on) {
+            super(facilityType, latitude, longitude, title, rating);
+            setName(name);
+            setOn(on);
+        }
+
+        /**
+         * Gets the name property of the golf course.
+         *
+         * @return The name property of the golf course.
+         */
+        public final StringProperty nameProperty() {
+            return this.name;
+        }
+
+        /**
+         * Gets the name of the golf course.
+         *
+         * @return The name of the golf course.
+         */
+        public final String getName() {
+            return this.nameProperty().get();
+        }
+
+        /**
+         * Sets the name of the golf course.
+         *
+         * @param name The name of the golf course.
+         */
+        public final void setName(final String name) {
+            this.nameProperty().set(name);
+        }
+
+        /**
+         * Gets the on property of the golf course.
+         *
+         * @return The on property of the golf course.
+         */
+        public final BooleanProperty onProperty() {
+            return this.on;
+        }
+
+        /**
+         * Gets the on state of the golf course.
+         *
+         * @return The on state of the golf course.
+         */
+        public final boolean isOn() {
+            return this.onProperty().get();
+        }
+
+        /**
+         * Sets the on state of the golf course.
+         *
+         * @param on The on state of the golf course.
+         */
+        public final void setOn(final boolean on) {
+            this.onProperty().set(on);
+        }
+
+        /**
+         * Returns the name of the golf course as a string.
+         *
+         * @return The name of the golf course as a string.
+         */
+        @Override
+        public String toString() {
+            return getName();
+        }
     }
 
     /**
