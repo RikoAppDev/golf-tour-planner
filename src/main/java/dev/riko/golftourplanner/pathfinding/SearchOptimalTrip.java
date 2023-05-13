@@ -1,6 +1,6 @@
 package dev.riko.golftourplanner.pathfinding;
 
-import dev.riko.golftourplanner.exeptions.NoPathFound;
+import dev.riko.golftourplanner.exceptions.NoPathFoundException;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.place.Place;
 
@@ -25,9 +25,9 @@ public class SearchOptimalTrip {
      * @param startPlace    The starting place for the search.
      * @param finalPlace    The final place for the search.
      * @param exploringRate The exploring rate for Dijkstra's algorithm.
-     * @throws NoPathFound If no path can be found between the start place and final place in the world map.
+     * @throws NoPathFoundException If no path can be found between the start place and final place in the world map.
      */
-    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace, int exploringRate) throws NoPathFound {
+    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace, int exploringRate) throws NoPathFoundException {
         this.startPlace = startPlace;
         this.finalPlace = finalPlace;
         this.exploringRate = exploringRate;
@@ -43,9 +43,9 @@ public class SearchOptimalTrip {
      * @param world      The world map where the search is performed.
      * @param startPlace The starting place for the search.
      * @param finalPlace The final place for the search.
-     * @throws NoPathFound If no path can be found between the start place and final place in the world map.
+     * @throws NoPathFoundException If no path can be found between the start place and final place in the world map.
      */
-    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace) throws NoPathFound {
+    public SearchOptimalTrip(World world, Place startPlace, Place finalPlace) throws NoPathFoundException {
         this.startPlace = startPlace;
         this.finalPlace = finalPlace;
 

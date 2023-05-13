@@ -1,6 +1,6 @@
 package dev.riko.golftourplanner.pathfinding;
 
-import dev.riko.golftourplanner.exeptions.NoPathFound;
+import dev.riko.golftourplanner.exceptions.NoPathFoundException;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.place.Place;
 
@@ -104,9 +104,9 @@ public class Dijkstra implements GraphUtilFunctions<Dijkstra.Node>, Container {
      * Main Dijkstra's algorithm which find the shortest path between the start and final places.
      *
      * @return the list of places representing the shortest path.
-     * @throws NoPathFound if there is no path between the start and final places.
+     * @throws NoPathFoundException if there is no path between the start and final places.
      */
-    public List<Place> getTheShortestPath() throws NoPathFound {
+    public List<Place> getTheShortestPath() throws NoPathFoundException {
         Node currentNode = graph.getNode(String.valueOf(startPlace.hashCode()));
         currentNode.distanceScore = 0;
 
@@ -132,7 +132,7 @@ public class Dijkstra implements GraphUtilFunctions<Dijkstra.Node>, Container {
                         .collect(Collectors.toList());
             }
             if (getMinDistanceScoreNode(unvisitedNodes).distanceScore == Double.POSITIVE_INFINITY) {
-                throw new NoPathFound();
+                throw new NoPathFoundException();
             }
         }
     }

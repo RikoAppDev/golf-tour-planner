@@ -1,7 +1,7 @@
 package dev.riko.golftourplanner.controlers;
 
 import dev.riko.golftourplanner.MainApp;
-import dev.riko.golftourplanner.exeptions.NonAllowedInputException;
+import dev.riko.golftourplanner.exceptions.NonAllowedInputException;
 import dev.riko.golftourplanner.utils.GenerateData;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.facility.FacilityType;
@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -102,6 +101,18 @@ public class WorldFXMLController {
     public TextField teamSize;
     @FXML
     public TextField teamName;
+    @FXML
+    public AnchorPane tourInfoPanel;
+    @FXML
+    public Button closeTourInfoBtn;
+    @FXML
+    public ListView<String> golfTourListView;
+    @FXML
+    public Label budgetAfterTour;
+    @FXML
+    public Label tourLength;
+    @FXML
+    public Label neededBudget;
     @FXML
     private Canvas worldMap;
     /**
@@ -256,6 +267,9 @@ public class WorldFXMLController {
         List<String> fpTitles = new ArrayList<>();
 
         facilityPlaces.forEach(place -> fpTitles.add(place.placeInfo()));
+
+        Collections.sort(fpTitles);
+
         listPlaces(fpTitles);
         listGolfCourses(facilityPlaces);
 
@@ -408,7 +422,7 @@ public class WorldFXMLController {
     }
 
     /**
-     * Opens the create tour panel, shows all places with golf courses on the map, and lists places with a golf course facility.
+     * Opens the creation tour panel, shows all places with golf courses on the map, and lists places with a golf course facility.
      */
     @FXML
     private void openTourPanel() {
@@ -471,5 +485,13 @@ public class WorldFXMLController {
         for (List<Place> shortestPath : golfTour) {
             showShortestPathOnMap(shortestPath);
         }
+    }
+
+    /**
+     * Closes the tour information panel and displays the creation tour panel
+     */
+    public void closeTourInfoPanel() {
+        tourInfoPanel.setVisible(false);
+        createTour_panel.setVisible(true);
     }
 }

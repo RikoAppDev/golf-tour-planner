@@ -1,6 +1,6 @@
 package dev.riko.golftourplanner.users;
 
-import dev.riko.golftourplanner.exeptions.NoPathFound;
+import dev.riko.golftourplanner.exceptions.NoPathFoundException;
 import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
 import dev.riko.golftourplanner.world.World;
 import dev.riko.golftourplanner.world.facility.FacilityType;
@@ -46,7 +46,7 @@ public class GolfTour {
      * @param startDestination     the starting destination of the tour
      * @param placeWithGolfCourses a list of places that have golf courses
      */
-    public GolfTour(Participant participant, Place startDestination, List<Place> placeWithGolfCourses) throws NoPathFound {
+    public GolfTour(Participant participant, Place startDestination, List<Place> placeWithGolfCourses) throws NoPathFoundException {
         this.participant = participant;
         this.placeWithGolfCourses = placeWithGolfCourses;
         this.startDestination = startDestination;
@@ -64,7 +64,7 @@ public class GolfTour {
      * @param finalDestination     the final destination of the tour
      * @param placeWithGolfCourses a list of places that have golf courses
      */
-    public GolfTour(Participant participant, Place startDestination, Place finalDestination, List<Place> placeWithGolfCourses) throws NoPathFound {
+    public GolfTour(Participant participant, Place startDestination, Place finalDestination, List<Place> placeWithGolfCourses) throws NoPathFoundException {
         this.participant = participant;
         this.placeWithGolfCourses = placeWithGolfCourses;
         this.startDestination = startDestination;
@@ -77,7 +77,7 @@ public class GolfTour {
     /**
      * Plans the golf tour by finding the shortest path between each pair of places with a golf course.
      */
-    private void planGolfTour() throws NoPathFound {
+    private void planGolfTour() throws NoPathFoundException {
         placeWithGolfCourses.add(0, startDestination);
         placeWithGolfCourses.add(placeWithGolfCourses.size(), finalDestination);
 
@@ -86,17 +86,22 @@ public class GolfTour {
         Place startPlace = placeWithGolfCourses.get(0);
         Place finalPlace = placeWithGolfCourses.get(1);
 
-        SearchOptimalTrip searchOptimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
-        golfTour.add(searchOptimalTrip.getShortestPath());
-        tourLength += searchOptimalTrip.getShortestPathLength();
+        SearchOptimalTrip searchOptimalTrip;
+        if (!startPlace.equals(finalPlace)) {
+            searchOptimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
+            golfTour.add(searchOptimalTrip.getShortestPath());
+            tourLength += searchOptimalTrip.getShortestPathLength();
+        }
 
         for (int i = 1; i < placeWithGolfCourses.size() - 1; i++) {
             startPlace = placeWithGolfCourses.get(i);
             finalPlace = placeWithGolfCourses.get(i + 1);
 
-            searchOptimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
-            golfTour.add(searchOptimalTrip.getShortestPath());
-            tourLength += searchOptimalTrip.getShortestPathLength();
+            if (!startPlace.equals(finalPlace)) {
+                searchOptimalTrip = new SearchOptimalTrip(world, startPlace, finalPlace);
+                golfTour.add(searchOptimalTrip.getShortestPath());
+                tourLength += searchOptimalTrip.getShortestPathLength();
+            }
 
             System.out.println(placeWithGolfCourses);
             double fee = placeWithGolfCourses.get(i).getFacility(FacilityType.GOLF_COURSE).getRating() * 10;

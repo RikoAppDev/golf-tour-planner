@@ -1,4 +1,4 @@
-package dev.riko.golftourplanner.exeptions;
+package dev.riko.golftourplanner.exceptions;
 
 /**
  * This exception is thrown when a player's Handicap (HCP) value is missing.

@@ -81,4 +81,13 @@
          <Button fx:id="generateTourBtn" mnemonicParsing="false" text="Generate tour" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" />
       </children>
    </AnchorPane>
+   <AnchorPane fx:id="tourInfoPanel" layoutX="21.0" layoutY="16.0" prefHeight="906.0" prefWidth="600.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+         <Button fx:id="closeTourInfoBtn" mnemonicParsing="false" onAction="#closeTourInfoPanel" prefHeight="25.0" prefWidth="30.0" text="❌" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+         <Label fx:id="budgetAfterTour" layoutX="92.0" layoutY="109.0" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="100.0" />
+         <Label fx:id="tourLength" layoutX="92.0" layoutY="166.0" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="130.0" />
+         <Label fx:id="neededBudget" layoutX="102.0" layoutY="176.0" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="160.0" />
+         <ListView fx:id="golfTourListView" focusTraversable="false" prefHeight="441.0" prefWidth="550.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="250.0" />
+      </children>
+   </AnchorPane>
 </AnchorPane>

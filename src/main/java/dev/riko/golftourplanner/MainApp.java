@@ -1,7 +1,7 @@
 package dev.riko.golftourplanner;
 
 import dev.riko.golftourplanner.controlers.WorldFXMLController;
-import dev.riko.golftourplanner.exeptions.*;
+import dev.riko.golftourplanner.exceptions.*;
 import dev.riko.golftourplanner.pathfinding.SearchOptimalTrip;
 import dev.riko.golftourplanner.users.GolfTour;
 import dev.riko.golftourplanner.users.Golfer;
@@ -115,7 +115,7 @@ public class MainApp extends Application {
                         a.setContentText("City " + e.getMessage() + " does not exist.");
                         a.showAndWait();
                     });
-                } catch (NoPathFound e) {
+                } catch (NoPathFoundException e) {
                     Platform.runLater(() -> {
                         Alert a = new Alert(Alert.AlertType.ERROR);
                         a.initOwner(stage);
@@ -286,12 +286,40 @@ public class MainApp extends Application {
 
                     GolfTour golfTour;
                     if (sp.equals(fp)) {
+                        if (selectedGolfCoursePlaces.size() == 0) {
+                            throw new NonePlaceSelectedException();
+                        }
                         golfTour = new GolfTour(participant, sp, selectedGolfCoursePlaces);
                     } else {
                         golfTour = new GolfTour(participant, sp, fp, selectedGolfCoursePlaces);
                     }
-                    worldFXMLController.showGolfTour(golfTour.getGolfTour());
-                } catch (NoPathFound e) {
+
+                    Platform.runLater(() -> {
+                        worldFXMLController.createTour_panel.setVisible(false);
+                        worldFXMLController.tourInfoPanel.setVisible(true);
+
+                        worldFXMLController.budgetAfterTour.setText("Budget: " + String.format("%.2f", golfTour.getParticipant().getBudget()) + "€");
+                        worldFXMLController.tourLength.setText("Tour length: " + String.format("%.2f", golfTour.getTourLength()) + "km");
+                        if (golfTour.getParticipant().getBudget() < 0) {
+                            worldFXMLController.neededBudget.setText("Insufficient budget. Minimal needed budget: " + String.format("%.2f", (budget - golfTour.getParticipant().getBudget())) + "€");
+                        }
+
+                        worldFXMLController.showGolfTour(golfTour.getGolfTour());
+
+                        int i = 1;
+                        List<String> path = new ArrayList<>();
+                        for (List<Place> shortestPath : golfTour.getGolfTour()) {
+                            path.add(String.valueOf(i));
+                            for (Place place : shortestPath) {
+                                path.add(place.placeInfo());
+                                path.add("⬇️");
+                            }
+                            path = path.subList(0, path.size() - 1);
+                            i++;
+                        }
+                        worldFXMLController.golfTourListView.getItems().setAll(path);
+                    });
+                } catch (NoPathFoundException e) {
                     Platform.runLater(() -> {
                         Alert a = new Alert(Alert.AlertType.ERROR);
                         a.initOwner(stage);
@@ -361,6 +389,14 @@ public class MainApp extends Application {
                         a.initOwner(stage);
                         a.setTitle("Warning");
                         a.setContentText("Team size is empty or incorrect.");
+                        a.showAndWait();
+                    });
+                } catch (NonePlaceSelectedException e) {
+                    Platform.runLater(() -> {
+                        Alert a = new Alert(Alert.AlertType.WARNING);
+                        a.initOwner(stage);
+                        a.setTitle("Warning");
+                        a.setContentText("Select golf course.");
                         a.showAndWait();
                     });
                 }
