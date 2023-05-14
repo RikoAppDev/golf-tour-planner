@@ -1,0 +1,10 @@
+module:dev.riko.golftourplanner
+dev.riko.golftourplanner
+dev.riko.golftourplanner.controlers
+dev.riko.golftourplanner.exceptions
+dev.riko.golftourplanner.pathfinding
+dev.riko.golftourplanner.users
+dev.riko.golftourplanner.utils
+dev.riko.golftourplanner.world
+dev.riko.golftourplanner.world.facility
+dev.riko.golftourplanner.world.place
