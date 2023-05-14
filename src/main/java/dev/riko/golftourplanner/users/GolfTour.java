@@ -103,7 +103,6 @@ public class GolfTour {
                 tourLength += searchOptimalTrip.getShortestPathLength();
             }
 
-            System.out.println(placeWithGolfCourses);
             double fee = placeWithGolfCourses.get(i).getFacility(FacilityType.GOLF_COURSE).getRating() * 10;
             if (participant instanceof Team) {
                 participant.decreaseBudget(fee * ((Team) participant).getGolfers().size());

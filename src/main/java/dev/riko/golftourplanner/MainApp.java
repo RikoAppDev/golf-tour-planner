@@ -372,7 +372,7 @@ public class MainApp extends Application {
                         Alert a = new Alert(Alert.AlertType.WARNING);
                         a.initOwner(stage);
                         a.setTitle("Warning");
-                        a.setContentText("Wrong number format. (e.g. budget -> 99.99, hcp -> 54.0)");
+                        a.setContentText("Wrong number format. (e.g. budget -> 99.99, hcp -> 54.0, age -> 19)");
                         a.showAndWait();
                     });
                 } catch (UnknownPlaceException e) {

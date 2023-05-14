@@ -315,7 +315,6 @@ public class WorldFXMLController {
                 } else {
                     markPlace(graphicsContext, x, y, Color.RED);
                 }
-                System.out.println(golfCourse.getName() + " changed on state from " + wasOn + " to " + isNowOn);
             });
 
             golfCoursesList.getItems().add(golfCourse);
